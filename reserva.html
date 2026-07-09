@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Reserva</title>
+<style>
+  /* ============================================================
+     RESET BÁSICO
+     box-sizing: border-box hace que el padding y el border se
+     cuenten DENTRO del ancho/alto del elemento, y no se sumen
+     aparte. Esto es clave para que los botones de abajo midan
+     exactamente lo mismo entre sí.
+     ============================================================ */
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #222;
+  }
+
+  /* ============================================================
+     LAYOUT PRINCIPAL (2 columnas)
+     Usamos "display: flex" para poner la columna izquierda
+     (categoría + tarjetas) y la columna derecha (carrito,
+     fechas y botones) una al lado de la otra.
+     flex: 3 y flex: 1 definen la PROPORCIÓN de ancho que ocupa
+     cada columna (izquierda 3 partes, derecha 1 parte).
+     ============================================================ */
+  .contenedor {
+    display: flex;
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+  .izquierda {
+    flex: 3;
+  }
+  .derecha {
+    flex: 1;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+  }
+
+  /* Desplegable de categoría (Iluminación / Micrófono / Cámara) */
+  select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  /* ============================================================
+     GRILLA DE TARJETAS DE EQUIPOS
+     "display: grid" + "auto-fill" arma automáticamente tantas
+     columnas de mínimo 220px como entren en el ancho disponible,
+     y las reparte en filas. Así no hace falta calcular a mano
+     cuántas tarjetas van por fila.
+     ============================================================ */
+  .tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+  }
+  .tarjeta {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.15);
+  }
+  .tarjeta h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+  }
+  .tarjeta p {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #555;
+  }
+  /* Cuando un equipo ya está en el carrito, le agregamos esta
+     clase por JavaScript para resaltar la tarjeta con un borde
+     verde (outline) y que se note visualmente que ya se eligió. */
+  .tarjeta.seleccionada {
+    outline: 2px solid #2e7d32;
+  }
+
+  /* Botón "Agregar al carrito" dentro de cada tarjeta */
+  .btn-agregar {
+    width: 100%;
+    padding: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    background: #1565c0;
+    color: white;
+    cursor: pointer;
+  }
+  .btn-agregar:hover {
+    background: #0d47a1;
+  }
+  /* Estado "disabled": se activa por JS cuando el equipo ya fue
+     agregado, o cuando el carrito llegó al máximo de 5. */
+  .btn-agregar:disabled {
+    background: #9e9e9e;
+    cursor: not-allowed;
+  }
+
+  /* ============================================================
+     CARRITO (columna derecha, arriba de las fechas)
+     ============================================================ */
+  h2.titulo-carrito {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #222;
+  }
+  .carrito {
+    list-style: none;   /* saca las viñetas por defecto del <ul> */
+    padding: 0;
+    margin: 0 0 15px 0;
+    min-height: 30px;
+  }
+  .carrito li {
+    display: flex;
+    justify-content: space-between; /* nombre a la izq, botón a la der */
+    align-items: center;
+    background: #f0f0f0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .carrito li button {
+    background: #c62828;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 8px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .carrito-vacio {
+    color: #888;
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 15px;
+  }
+
+  /* ============================================================
+     BOTONES "ACEPTAR" Y "CANCELAR"
+     Para que queden EXACTAMENTE del mismo tamaño, aunque el
+     texto de cada uno tenga distinta longitud, usamos:
+       - display: flex  en el contenedor .botones (fila)
+       - flex: 1 1 0  en cada botón: esto le dice a cada botón
+         "no importa cuánto texto tengas, repartite el espacio
+         disponible en partes IGUALES" (flex-basis: 0 ignora el
+         contenido a la hora de calcular el ancho inicial).
+       - min-width: 0  evita que el texto largo (CANCELAR) empuje
+         al botón a ser más ancho que el otro.
+     ============================================================ */
+  .botones {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: row; /* uno al lado del otro */
+    gap: 12px;
+  }
+  button.grande {
+    flex: 1 1 0;   /* mismo ancho para los dos botones */
+    min-width: 0;  /* el texto no altera el ancho calculado */
+    width: 100%;
+    padding: 18px 0;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .confirmar {
+    background: #2e7d32;
+    color: white;
+  }
+  .confirmar:hover {
+    background: #256428;
+  }
+  .cancelar {
+    background: #c62828;
+    color: white;
+  }
+  .cancelar:hover {
+    background: #a32020;
+  }
+</style>
+</head>
+<body>
+
+<h1>Reserva</h1>
+
+<div class="contenedor">
+
+  <!-- ============================================================
+       COLUMNA IZQUIERDA: selector de categoría + tarjetas
+       ============================================================ -->
+  <div class="izquierda">
+
+    <!-- Al cambiar la opción elegida, se dispara mostrarEquipos()
+         que arma las tarjetas correspondientes en JavaScript. -->
+    <select id="categoria" onchange="mostrarEquipos()">
+      <option value="">-- Selecciona una categoría --</option>
+      <option value="iluminacion">Iluminación</option>
+      <option value="microfono">Micrófono</option>
+      <option value="camara">Cámara de video</option>
+    </select>
+
+    <!-- Este div empieza vacío. JavaScript lo llena dinámicamente
+         con las tarjetas (mostrarEquipos las inserta acá adentro). -->
+    <div class="tarjetas" id="tarjetas"></div>
+  </div>
+
+  <!-- ============================================================
+       COLUMNA DERECHA: carrito, fechas y botones de acción
+       ============================================================ -->
+  <div class="derecha">
+
+    <!-- Contador de equipos en el carrito (máximo 5) -->
+    <h2 class="titulo-carrito">Carrito (<span id="contadorCarrito">0</span>/5)</h2>
+    <ul class="carrito" id="carrito">
+      <li class="carrito-vacio">No hay equipos seleccionados.</li>
+    </ul>
+
+    <label for="fechaRetiro">Fecha de retiro</label>
+    <input type="date" id="fechaRetiro">
+
+    <label for="fechaDevolucion">Fecha de devolución</label>
+    <input type="date" id="fechaDevolucion">
+
+    <!-- Los dos botones están dentro del mismo contenedor flex
+         (.botones) y comparten la clase "grande", que es la que
+         les da el mismo tamaño exacto (ver comentario en el CSS). -->
+    <div class="botones">
+      <button class="grande confirmar" onclick="confirmarReserva()">ACEPTAR</button>
+      <button class="grande cancelar" onclick="cancelarReserva()">CANCELAR</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================================================================
+   DATOS: lista de equipos por categoría.
+   Es un objeto donde cada clave (iluminacion, microfono, camara)
+   apunta a un array de 10 equipos. Cada equipo es un array de
+   2 posiciones: [nombre, descripción].
+   Guardar los datos así (separados del HTML) permite generar
+   las tarjetas de forma dinámica con JavaScript, en vez de
+   escribir 30 tarjetas a mano en el HTML.
+   ================================================================ */
+const equipos = {
+  iluminacion: [
+    ["Panel LED Aputure 300D", "Luz LED de alta potencia, ideal para escenas principales."],
+    ["Softbox 90cm", "Difusor de luz suave para retratos y entrevistas."],
+    ["Kit de 3 puntos", "Set clásico de iluminación con luz principal, relleno y contraluz."],
+    ["Fresnel tungsteno 650W", "Luz direccional regulable para efectos dramáticos."],
+    ["Ring Light 18''", "Iluminación circular pareja, ideal para close-ups."],
+    ["Panel LED RGB Godox", "Iluminación de color para ambientaciones creativas."],
+    ["Reflector plegable 5 en 1", "Rebota o difumina luz natural o artificial."],
+    ["Tira LED regulable", "Iluminación flexible para fondos y detalles."],
+    ["Trípode de luz 2m", "Soporte robusto y ajustable para paneles y focos."],
+    ["Fondo de luz continua", "Ilumina el fondo de forma uniforme para croma o retrato."]
+  ],
+  microfono: [
+    ["Micrófono shotgun Rode NTG3", "Captura direccional para sonido de cámara."],
+    ["Lavalier inalámbrico", "Micrófono de solapa para entrevistas móviles."],
+    ["Micrófono de mano dinámico", "Ideal para conducción y voces en vivo."],
+    ["Micrófono de condensador USB", "Para grabación de estudio y podcasts."],
+    ["Boom pole con micrófono", "Captura de sonido ambiente en set."],
+    ["Grabadora portátil Zoom H4n", "Grabación de audio externa de alta calidad."],
+    ["Micrófono cardioide XLR", "Buena captación frontal y rechazo de ruido lateral."],
+    ["Sistema inalámbrico dual", "Dos canales para entrevistas simultáneas."],
+    ["Micrófono ambiental estéreo", "Capta el sonido general del entorno."],
+    ["Filtro antipop", "Reduce ruidos de aire al hablar cerca del micrófono."]
+  ],
+  camara: [
+    ["Cámara Sony A7S III", "Excelente en poca luz, ideal para video profesional."],
+    ["Cámara Canon EOS R5", "Alta resolución con grabación 8K."],
+    ["Cámara Blackmagic Pocket 6K", "Sensor grande, ideal para producción cinematográfica."],
+    ["Cámara GoPro Hero 12", "Compacta y resistente para tomas de acción."],
+    ["Trípode profesional con cabezal fluido", "Estabilidad para movimientos de cámara suaves."],
+    ["Estabilizador gimbal DJI RS3", "Movimientos de cámara fluidos a mano."],
+    ["Lente 24-70mm f/2.8", "Lente versátil para distintos planos."],
+    ["Lente 50mm f/1.8", "Ideal para retratos con poca profundidad de campo."],
+    ["Monitor externo de campo", "Permite revisar el encuadre y enfoque en tiempo real."],
+    ["Batería adicional y cargador", "Autonomía extra para jornadas largas de rodaje."]
+  ]
+};
+
+// Límite máximo de equipos que se pueden reservar al mismo tiempo.
+const MAX_EQUIPOS = 5;
+
+// "carrito" guarda los equipos elegidos. Cada elemento es un
+// objeto { id, nombre }. Empieza vacío.
+let carrito = [];
+
+/* ================================================================
+   mostrarEquipos()
+   Se ejecuta cada vez que cambia el <select> de categoría, y
+   también la volvemos a llamar después de agregar/quitar un
+   equipo del carrito (para actualizar qué botones quedan
+   habilitados o deshabilitados).
+
+   Pasos:
+   1. Lee la categoría elegida en el <select>.
+   2. Vacía el contenedor de tarjetas (innerHTML = "").
+   3. Si no hay categoría seleccionada, no hace nada más.
+   4. Recorre el array de equipos de esa categoría con forEach
+      y por cada uno arma una tarjeta HTML con:
+      - nombre y descripción
+      - un botón "Agregar al carrito"
+   5. El botón se deshabilita si el equipo ya está en el carrito
+      o si el carrito ya llegó al máximo de 5.
+   ================================================================ */
+function mostrarEquipos() {
+  const categoria = document.getElementById("categoria").value;
+  const contenedor = document.getElementById("tarjetas");
+  contenedor.innerHTML = "";
+
+  if (!categoria) return;
+
+  equipos[categoria].forEach((item, index) => {
+    // Genera un id único por equipo, ej: "camara-3"
+    const id = categoria + "-" + index;
+
+    // ¿Este equipo ya está en el carrito?
+    const yaEsta = carrito.some(e => e.id === id);
+
+    // ¿El carrito ya está lleno (5 equipos)?
+    const lleno = carrito.length >= MAX_EQUIPOS;
+
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "tarjeta" + (yaEsta ? " seleccionada" : "");
+    tarjeta.innerHTML = `
+      <h3>${item[0]}</h3>
+      <p>${item[1]}</p>
+      <button class="btn-agregar" ${yaEsta || lleno ? "disabled" : ""} onclick="agregarAlCarrito('${id}', '${item[0].replace(/'/g, "\\'")}')">
+        ${yaEsta ? "Agregado ✓" : (lleno ? "Carrito lleno" : "Agregar al carrito")}
+      </button>
+    `;
+    contenedor.appendChild(tarjeta);
+  });
+}
+
+/* ================================================================
+   agregarAlCarrito(id, nombre)
+   Se llama al hacer clic en "Agregar al carrito" de una tarjeta.
+   - Si ya se llegó al máximo, avisa con un alert y no agrega nada.
+   - Si el equipo ya estaba en el carrito, no hace nada (por las
+     dudas, aunque el botón ya debería estar deshabilitado).
+   - Si todo está bien, agrega el equipo al array "carrito" y
+     refresca tanto el carrito visual como las tarjetas (para que
+     el botón de ese equipo pase a decir "Agregado ✓").
+   ================================================================ */
+function agregarAlCarrito(id, nombre) {
+  if (carrito.length >= MAX_EQUIPOS) {
+    alert("Ya llegaste al máximo de " + MAX_EQUIPOS + " equipos.");
+    return;
+  }
+  if (carrito.some(e => e.id === id)) return;
+
+  carrito.push({ id, nombre });
+  actualizarCarrito();
+  mostrarEquipos();
+}
+
+/* ================================================================
+   quitarDelCarrito(id)
+   Se llama al hacer clic en "Quitar" dentro del carrito.
+   Usa filter() para crear un nuevo array "carrito" SIN el
+   elemento cuyo id coincide con el que se quiere sacar.
+   ================================================================ */
+function quitarDelCarrito(id) {
+  carrito = carrito.filter(e => e.id !== id);
+  actualizarCarrito();
+  mostrarEquipos();
+}
+
+/* ================================================================
+   actualizarCarrito()
+   Redibuja la lista <ul id="carrito"> según el contenido actual
+   del array "carrito", y actualiza el número "X/5" del título.
+   Si el carrito está vacío, muestra el mensaje "No hay equipos
+   seleccionados."
+   ================================================================ */
+function actualizarCarrito() {
+  const lista = document.getElementById("carrito");
+  const contador = document.getElementById("contadorCarrito");
+  contador.textContent = carrito.length;
+
+  if (carrito.length === 0) {
+    lista.innerHTML = '<li class="carrito-vacio">No hay equipos seleccionados.</li>';
+    return;
+  }
+
+  lista.innerHTML = "";
+  carrito.forEach(item => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${item.nombre}</span><button onclick="quitarDelCarrito('${item.id}')">Quitar</button>`;
+    lista.appendChild(li);
+  });
+}
+
+/* ================================================================
+   confirmarReserva()  →  botón "ACEPTAR"
+   Valida que:
+   1. Haya al menos un equipo en el carrito.
+   2. Se hayan cargado las dos fechas (retiro y devolución).
+   Si todo está OK, muestra un resumen de la reserva.
+   ================================================================ */
+function confirmarReserva() {
+  const retiro = document.getElementById("fechaRetiro").value;
+  const devolucion = document.getElementById("fechaDevolucion").value;
+
+  if (carrito.length === 0) {
+    alert("Agrega al menos un equipo al carrito.");
+    return;
+  }
+  if (!retiro || !devolucion) {
+    alert("Por favor selecciona ambas fechas.");
+    return;
+  }
+  const nombres = carrito.map(e => e.nombre).join(", ");
+  alert("Reserva confirmada del " + retiro + " al " + devolucion + "\nEquipos: " + nombres);
+}
+
+/* ================================================================
+   cancelarReserva()  →  botón "CANCELAR"
+   Resetea todo el formulario a su estado inicial:
+   - Vuelve el <select> a "-- Selecciona una categoría --"
+   - Borra las tarjetas mostradas
+   - Limpia las dos fechas
+   - Vacía el carrito y lo vuelve a dibujar
+   ================================================================ */
+function cancelarReserva() {
+  document.getElementById("categoria").value = "";
+  document.getElementById("tarjetas").innerHTML = "";
+  document.getElementById("fechaRetiro").value = "";
+  document.getElementById("fechaDevolucion").value = "";
+  carrito = [];
+  actualizarCarrito();
+  alert("Reserva cancelada.");
+}
+</script>
+
+</body>
+</html>
