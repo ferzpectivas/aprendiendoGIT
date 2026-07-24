@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStock - Panel Alumno</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>CineStock - Módulo Alumno</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">Cerrar Sesión</a></li>
+                <li><a href="alumno.html" class="active">Reserva / Carrito</a></li>
+                <li><a href="panolero.html">Vista Pañolero</a></li>
+                <li><a href="director.html">Vista Director</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="layout-split">
+        <!-- Columna Izquierda: Catálogo Completo -->
+        <section class="catalog-section">
+            <h2>Catálogo de Equipamiento</h2>
+            <br>
+
+            <!-- Categoría 1: Cámaras -->
+            <h3>📷 Cámaras DSLR / Filmadoras</h3>
+            <div class="grid-equipos">
+                <article class="card-equipo">
+                    <h4>Cámara Canon EOS 80D</h4>
+                    <p>Estado: Disponibles (3)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Cámara Sony Alpha A7 III</h4>
+                    <p>Estado: Disponibles (2)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Blackmagic Pocket 4K</h4>
+                    <p>Estado: Disponible (1)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Panasonic Lumix GH5</h4>
+                    <p>Estado: Disponibles (2)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+            </div>
+            <br>
+
+            <!-- Categoría 2: Lentes -->
+            <h3>🔍 Lentes y Objetivos</h3>
+            <div class="grid-equipos">
+                <article class="card-equipo">
+                    <h4>Lente Canon 50mm f/1.8</h4>
+                    <p>Estado: Disponibles (5)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Lente Sigma 18-35mm f/1.8</h4>
+                    <p>Estado: Disponibles (2)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Lente Sony 24-70mm f/2.8</h4>
+                    <p>Estado: Disponible (1)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Lente Canon 85mm f/1.4</h4>
+                    <p>Estado: Disponibles (3)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+            </div>
+            <br>
+
+            <!-- Categoría 3: Luces -->
+            <h3>💡 Kits de Iluminación</h3>
+            <div class="grid-equipos">
+                <article class="card-equipo">
+                    <h4>Kit Luces LED Ledgo</h4>
+                    <p>Estado: Disponibles (4)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Aputure Amaran 100d</h4>
+                    <p>Estado: Disponibles (2)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Panel LED Godox 500</h4>
+                    <p>Estado: Disponibles (3)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Fresnel Halógeno 650W</h4>
+                    <p>Estado: Disponibles (2)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+            </div>
+            <br>
+
+            <!-- Categoría 4: Trípodes y Soporte -->
+            <h3>🎬 Trípodes y Soportes</h3>
+            <div class="grid-equipos">
+                <article class="card-equipo">
+                    <h4>Trípode Manfrotto 504HD</h4>
+                    <p>Estado: Disponibles (6)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Monopié Benro Video</h4>
+                    <p>Estado: Disponibles (3)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>Estabilizador Ronin S</h4>
+                    <p>Estado: Disponible (1)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+                <article class="card-equipo">
+                    <h4>C Stative (Pie de Iluminación)</h4>
+                    <p>Estado: Disponibles (8)</p>
+                    <button type="button">+ Agregar al Carrito</button>
+                </article>
+            </div>
+        </section>
+
+        <!-- Columna Derecha: Simulación de Carrito y Formulario -->
+        <aside class="cart-section">
+            <h2>Mi Solicitud de Préstamo</h2>
+            <br>
+            <form action="confirmacion.html" method="GET">
+                <div class="cart-list">
+                    <p><strong>Ítems en carrito (Ejemplo):</strong></p>
+                    <ul>
+                        <li>• 1x Canon EOS 80D</li>
+                        <li>• 1x Lente 50mm f/1.8</li>
+                        <li>• 1x Trípode Manfrotto</li>
+                    </ul>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="fecha-retiro">Fecha de Retiro:</label>
+                    <input type="date" id="fecha-retiro" name="fecha-retiro" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha-devolucion">Fecha de Devolución:</label>
+                    <input type="date" id="fecha-devolucion" name="fecha-devolucion" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-success">Aceptar Reserva</button>
+                    <button type="reset" class="btn-danger">Limpiar</button>
+                </div>
+            </form>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CineStock - Escuela Lumière</p>
+    </footer>
+</body>
+</html>
