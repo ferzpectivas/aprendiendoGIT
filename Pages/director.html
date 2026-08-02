@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStock - Módulo Director</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>CineStock - Tablero de Control</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">Cerrar Sesión</a></li>
+                <li><a href="alumno.html">Vista Alumno</a></li>
+                <li><a href="panolero.html">Vista Pañolero</a></li>
+                <li><a href="director.html" class="active">Vista Director</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Ocupación e Inventario General</h2>
+                <button type="button" class="btn-action">Generar Reporte de Mora</button>
+            </div>
+            <br>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID Equipo</th>
+                        <th>Nombre del Equipo</th>
+                        <th>Ocupación / Estado</th>
+                        <th>Total Préstamos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>EQ-001</td>
+                        <td>Cámara Canon EOS 80D</td>
+                        <td>Reservado</td>
+                        <td>42 veces</td>
+                    </tr>
+                    <tr>
+                        <td>EQ-002</td>
+                        <td>Kit Luces LED Ledgo</td>
+                        <td>En Reparación</td>
+                        <td>18 veces</td>
+                    </tr>
+                    <tr>
+                        <td>EQ-003</td>
+                        <td>Micrófono Shotgun Rode</td>
+                        <td>Disponible</td>
+                        <td>55 veces</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CineStock - Escuela Lumière</p>
+    </footer>
+</body>
+</html>
