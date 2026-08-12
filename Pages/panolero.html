@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStock - Módulo Pañolero</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>CineStock - Depósito (Pañol)</h1>
+        <nav>
+            <ul>
+                <li><a href="../index.html">Cerrar Sesión</a></li>
+                <li><a href="alumno.html">Vista Alumno</a></li>
+                <li><a href="panolero.html" class="active">Vista Pañolero</a></li>
+                <li><a href="director.html">Vista Director</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Gestión de Reservas y Devoluciones</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Matrícula Alumno</th>
+                        <th>Equipos Solicitados</th>
+                        <th>Fecha Retiro</th>
+                        <th>Fecha Devolución</th>
+                        <th>Estado de Reserva</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MAT-1042</td>
+                        <td>Cámara DSLR + Kit Luces</td>
+                        <td>2026-08-10</td>
+                        <td>2026-08-12</td>
+                        <td><span class="badge warning">Pendiente Entrega</span></td>
+                    </tr>
+                    <tr>
+                        <td>MAT-0988</td>
+                        <td>Trípode Manfrotto</td>
+                        <td>2026-08-08</td>
+                        <td>2026-08-09</td>
+                        <td><span class="badge success">Devuelto en condiciones</span></td>
+                    </tr>
+                    <tr>
+                        <td>MAT-1120</td>
+                        <td>Micrófono Corbatero</td>
+                        <td>2026-08-05</td>
+                        <td>2026-08-07</td>
+                        <td><span class="badge danger">Devuelto con faltantes</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CineStock - Escuela Lumière</p>
+    </footer>
+</body>
+</html>
