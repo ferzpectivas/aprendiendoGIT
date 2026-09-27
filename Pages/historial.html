@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStock - Mi Historial</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .reserva-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .reserva-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .reserva-header h3 {
+            font-size: 1rem;
+            margin: 0;
+        }
+        .reserva-detalle {
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+        .reserva-detalle strong {
+            display: inline-block;
+            min-width: 140px;
+        }
+        .reserva-equipos {
+            margin: 0.75rem 0;
+            padding: 0;
+            list-style: none;
+        }
+        .reserva-equipos li {
+            padding: 0.25rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .btn-cancelar {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 14px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-cancelar:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .seccion-titulo {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CineStock - Mi Historial</h1>
+        <nav>
+            <ul>
+                <li><a href="#" id="btn-logout">Cerrar Sesion</a></li>
+                <li><a href="alumno.html">Catalogo</a></li>
+                <li><a href="historial.html" class="active">Mi Historial</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Mis Reservas</h2>
+        <div id="historial-contenido">
+            <p style="color:#64748b;">Cargando...</p>
+        </div>
+    </main>
+
+    <script src="../js/datos.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/reservas.js"></script>
+
+    <script>
+    /**
+     * ================================================================
+     * PÁGINA DE HISTORIAL DEL ALUMNO
+     * ================================================================
+     * Muestra todas las reservas del alumno logueado, separadas en:
+     *   - Reservas activas (reservado, entregado)
+     *   - Reservas finalizadas (devuelto_ok, devuelto_faltantes)
+     *
+     * El alumno puede cancelar reservas activas si cumplen las
+     * condiciones (estado reservado y >= 24h antes del retiro).
+     *
+     * FLUJO:
+     *   1. Verificar sesión de alumno
+     *   2. Obtener reservas del usuario actual
+     *   3. Separar en activas / finalizadas
+     *   4. Renderizar cada una con sus detalles
+     */
+
+    if (!Auth.verificarSesion()) {
+        // Redirige al login
+    } else if (!Auth.verificarRol('alumno')) {
+        // Redirige a la vista correcta
+    } else {
+        inicializarHistorial();
+    }
+
+    async function inicializarHistorial() {
+        // Logout
+        document.getElementById('btn-logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            Auth.logout();
+            window.location.href = '../index.html';
+        });
+
+        await cargarHistorial();
+    }
+
+    async function cargarHistorial() {
+        const contenedor = document.getElementById('historial-contenido');
+        const usuario = Auth.getUsuarioActual();
+        const todasLasReservas = await Reservas.obtenerReservasPorUsuario(usuario.id);
+
+        if (todasLasReservas.length === 0) {
+            contenedor.innerHTML =
+                '<p style="color:#64748b;text-align:center;margin-top:2rem;">No tenés reservas todavía.</p>' +
+                '<p style="text-align:center;"><a href="alumno.html" style="color:#0284c7;">Ir al Catálogo</a></p>';
+            return;
+        }
+
+        // Separar en activas (reservado/entregado) y finalizadas
+        const activas = todasLasReservas.filter(function(r) {
+            return r.estado === 'reservado' || r.estado === 'entregado';
+        });
+        const finalizadas = todasLasReservas.filter(function(r) {
+            return r.estado === 'devuelto_ok' || r.estado === 'devuelto_faltantes';
+        });
+
+        // Ordenar por fecha de creación (más recientes primero)
+        activas.sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+        finalizadas.sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+
+        let html = '';
+
+        // --- Reservas Activas ---
+        if (activas.length > 0) {
+            html += '<h3 class="seccion-titulo">Reservas Activas (' + activas.length + ')</h3>';
+            for (const reserva of activas) {
+                html += await renderizarReserva(reserva, true);
+            }
+        }
+
+        // --- Reservas Finalizadas ---
+        if (finalizadas.length > 0) {
+            html += '<h3 class="seccion-titulo" style="margin-top:2rem;">Reservas Finalizadas (' + finalizadas.length + ')</h3>';
+            for (const reserva of finalizadas) {
+                html += await renderizarReserva(reserva, false);
+            }
+        }
+
+        contenedor.innerHTML = html;
+    }
+
+    async function renderizarReserva(reserva, esActiva) {
+        const equipos = await Reservas.resolverEquiposReserva(reserva);
+        const nombresEquipos = equipos.map(function(e) {
+            return '<li>' + e.nombre + ' (' + e.codigoBarras + ')</li>';
+        }).join('');
+
+        // Badges de estado
+        const badges = {
+            reservado: '<span class="badge warning">Reservado</span>',
+            entregado: '<span class="badge" style="background:#0284c7;">Entregado</span>',
+            devuelto_ok: '<span class="badge success">Devuelto OK</span>',
+            devuelto_faltantes: '<span class="badge danger">Devuelto con Faltantes</span>'
+        };
+
+        // Determinar si se puede cancelar
+        let botonCancelar = '';
+        if (reserva.estado === 'reservado') {
+            const fechaRetiro = new Date(reserva.fechaRetiro + 'T00:00:00');
+            const ahora = new Date();
+            const horasRestantes = (fechaRetiro - ahora) / (1000 * 60 * 60);
+            const puedeCancelar = horasRestantes >= 24;
+
+            botonCancelar = '<button class="btn-cancelar" ' +
+                (puedeCancelar ? '' : 'disabled title="Faltan menos de 24 horas para el retiro"') +
+                ' onclick="cancelarReserva(\'' + reserva.id + '\')">' +
+                (puedeCancelar ? 'Cancelar Reserva' : 'No se puede cancelar') +
+                '</button>';
+        }
+
+        const fechaCreacion = new Date(reserva.createdAt).toLocaleDateString('es-AR');
+
+        return '<div class="reserva-card">' +
+            '<div class="reserva-header">' +
+                '<h3>' + reserva.id.toUpperCase() + ' ' + (badges[reserva.estado] || '') + '</h3>' +
+                botonCancelar +
+            '</div>' +
+            '<div class="reserva-detalle"><strong>Creada:</strong> ' + fechaCreacion + '</div>' +
+            '<div class="reserva-detalle"><strong>Retiro:</strong> ' + reserva.fechaRetiro + '</div>' +
+            '<div class="reserva-detalle"><strong>Devolucion:</strong> ' + reserva.fechaDevolucion + '</div>' +
+            (reserva.notas ? '<div class="reserva-detalle"><strong>Notas:</strong> ' + reserva.notas + '</div>' : '') +
+            '<ul class="reserva-equipos">' + nombresEquipos + '</ul>' +
+        '</div>';
+    }
+
+    async function cancelarReserva(reservaId) {
+        if (!confirm('¿Seguro que querés cancelar esta reserva?')) return;
+
+        const resultado = await Reservas.cancelarReserva(reservaId);
+        if (resultado.exito) {
+            await cargarHistorial();
+        } else {
+            alert(resultado.mensaje);
+        }
+    }
+    </script>
+</body>
+</html>

@@ -5,164 +5,456 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineStock - Panel Alumno</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        /* Estilos específicos para la vista del alumno */
+        .filtros-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filtros-bar .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+        .card-equipo.en-carrito {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        .card-equipo.no-disponible {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .badge-gama {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .gama-premium { background: #fef3c7; color: #92400e; }
+        .gama-standard { background: #e0e7ff; color: #3730a3; }
+        .estado-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        .estado-disponible { background: #dcfce7; color: #166534; }
+        .estado-mantenimiento { background: #fef9c3; color: #854d0e; }
+        .estado-prestado { background: #fee2e2; color: #991b1b; }
+        .estado-baja { background: #e5e7eb; color: #374151; }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .cart-item-nombre { font-weight: 600; }
+        .cart-item-codigo { font-size: 0.8rem; color: #64748b; }
+        .cart-item-remove {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .cart-count-badge {
+            background: #0284c7;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .historial-section { margin-top: 2rem; }
+        .historial-reserva {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .historial-reserva-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .btn-cancelar {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-cancelar:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>CineStock - Módulo Alumno</h1>
+        <h1>CineStock - Modulo Alumno</h1>
         <nav>
             <ul>
-                <li><a href="../index.html">Cerrar Sesión</a></li>
-                <li><a href="alumno.html" class="active">Reserva / Carrito</a></li>
-                <li><a href="panolero.html">Vista Pañolero</a></li>
-                <li><a href="director.html">Vista Director</a></li>
+                <li><a href="#" id="btn-logout">Cerrar Sesion</a></li>
+                <li><a href="alumno.html" class="active">Catalogo</a></li>
+                <li><a href="historial.html">Mi Historial</a></li>
             </ul>
         </nav>
     </header>
 
     <main class="layout-split">
-        <!-- Columna Izquierda: Catálogo Completo -->
+        <!-- Columna Izquierda: Catálogo con filtros -->
         <section class="catalog-section">
-            <h2>Catálogo de Equipamiento</h2>
-            <br>
+            <h2>Catalogo de Equipamiento</h2>
 
-            <!-- Categoría 1: Cámaras -->
-            <h3>📷 Cámaras DSLR / Filmadoras</h3>
-            <div class="grid-equipos">
-                <article class="card-equipo">
-                    <h4>Cámara Canon EOS 80D</h4>
-                    <p>Estado: Disponibles (3)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Cámara Sony Alpha A7 III</h4>
-                    <p>Estado: Disponibles (2)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Blackmagic Pocket 4K</h4>
-                    <p>Estado: Disponible (1)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Panasonic Lumix GH5</h4>
-                    <p>Estado: Disponibles (2)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
+            <!-- Filtros: búsqueda por texto y por categoría -->
+            <div class="filtros-bar">
+                <div class="form-group">
+                    <label for="filtro-busqueda">Buscar:</label>
+                    <input type="text" id="filtro-busqueda" placeholder="Nombre del equipo...">
+                </div>
+                <div class="form-group">
+                    <label for="filtro-categoria">Categoria:</label>
+                    <select id="filtro-categoria">
+                        <option value="">Todas</option>
+                        <option value="camara">Camaras</option>
+                        <option value="lente">Lentes</option>
+                        <option value="iluminacion">Iluminacion</option>
+                        <option value="tripode">Tripodes</option>
+                        <option value="audio">Audio</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-disponible">Disponibilidad:</label>
+                    <select id="filtro-disponible">
+                        <option value="">Todos</option>
+                        <option value="true">Solo disponibles</option>
+                    </select>
+                </div>
             </div>
-            <br>
 
-            <!-- Categoría 2: Lentes -->
-            <h3>🔍 Lentes y Objetivos</h3>
-            <div class="grid-equipos">
-                <article class="card-equipo">
-                    <h4>Lente Canon 50mm f/1.8</h4>
-                    <p>Estado: Disponibles (5)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Lente Sigma 18-35mm f/1.8</h4>
-                    <p>Estado: Disponibles (2)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Lente Sony 24-70mm f/2.8</h4>
-                    <p>Estado: Disponible (1)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Lente Canon 85mm f/1.4</h4>
-                    <p>Estado: Disponibles (3)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-            </div>
-            <br>
-
-            <!-- Categoría 3: Luces -->
-            <h3>💡 Kits de Iluminación</h3>
-            <div class="grid-equipos">
-                <article class="card-equipo">
-                    <h4>Kit Luces LED Ledgo</h4>
-                    <p>Estado: Disponibles (4)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Aputure Amaran 100d</h4>
-                    <p>Estado: Disponibles (2)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Panel LED Godox 500</h4>
-                    <p>Estado: Disponibles (3)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Fresnel Halógeno 650W</h4>
-                    <p>Estado: Disponibles (2)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-            </div>
-            <br>
-
-            <!-- Categoría 4: Trípodes y Soporte -->
-            <h3>🎬 Trípodes y Soportes</h3>
-            <div class="grid-equipos">
-                <article class="card-equipo">
-                    <h4>Trípode Manfrotto 504HD</h4>
-                    <p>Estado: Disponibles (6)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Monopié Benro Video</h4>
-                    <p>Estado: Disponibles (3)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>Estabilizador Ronin S</h4>
-                    <p>Estado: Disponible (1)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-                <article class="card-equipo">
-                    <h4>C Stative (Pie de Iluminación)</h4>
-                    <p>Estado: Disponibles (8)</p>
-                    <button type="button">+ Agregar al Carrito</button>
-                </article>
-            </div>
+            <!-- Contenedor donde JavaScript inserta las tarjetas de equipos -->
+            <div id="catalogo-equipos" class="grid-equipos"></div>
         </section>
 
-        <!-- Columna Derecha: Simulación de Carrito y Formulario -->
+        <!-- Columna Derecha: Carrito y formulario de reserva -->
         <aside class="cart-section">
-            <h2>Mi Solicitud de Préstamo</h2>
+            <h2>Mi Solicitud de Prestamo</h2>
+
+            <!-- Contador de equipos en el carrito -->
+            <p><strong>Equipos seleccionados: (<span id="cart-count">0</span>/5)</strong></p>
+
+            <!-- Lista de equipos en el carrito (se llena dinámicamente) -->
+            <div id="cart-list"></div>
+
             <br>
-            <form action="confirmacion.html" method="GET">
-                <div class="cart-list">
-                    <p><strong>Ítems en carrito (Ejemplo):</strong></p>
-                    <ul>
-                        <li>• 1x Canon EOS 80D</li>
-                        <li>• 1x Lente 50mm f/1.8</li>
-                        <li>• 1x Trípode Manfrotto</li>
-                    </ul>
-                </div>
-                <br>
+
+            <!-- Formulario de fechas y botón de reserva -->
+            <form id="reserva-form">
                 <div class="form-group">
                     <label for="fecha-retiro">Fecha de Retiro:</label>
-                    <input type="date" id="fecha-retiro" name="fecha-retiro" required>
+                    <input type="date" id="fecha-retiro" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="fecha-devolucion">Fecha de Devolución:</label>
-                    <input type="date" id="fecha-devolucion" name="fecha-devolucion" required>
+                    <label for="fecha-devolucion">Fecha de Devolucion:</label>
+                    <input type="date" id="fecha-devolucion" required>
                 </div>
+
+                <!-- Mensaje de error/éxito del formulario -->
+                <div id="reserva-mensaje" class="login-error"></div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn-success">Aceptar Reserva</button>
-                    <button type="reset" class="btn-danger">Limpiar</button>
+                    <button type="button" id="btn-limpiar" class="btn-danger">Limpiar</button>
                 </div>
             </form>
         </aside>
     </main>
 
-    <footer>
-        <p>&copy; 2026 CineStock - Escuela Lumière</p>
-    </footer>
+    <!-- Scripts: módulos primero, luego la lógica de esta página -->
+    <script src="../js/datos.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/carrito.js"></script>
+    <script src="../js/reservas.js"></script>
+
+    <script>
+    /**
+     * ================================================================
+     * PÁGINA DEL ALUMNO: CATÁLOGO + CARRITO + RESERVA
+     * ================================================================
+     * Esta página muestra todos los equipos disponibles para reservar.
+     * El alumno puede:
+     *   1. Buscar y filtrar equipos por categoría y disponibilidad
+     *   2. Agregar equipos al carrito (máximo 5)
+     *   3. Seleccionar fechas de retiro y devolución
+     *   4. Confirmar la reserva (se guarda en localStorage)
+     *
+     * FLUJO:
+     *   cargarCatalogo() → renderizarEquipos() → agregar/quitar del carrito
+     *   → confirmar reserva → Reservas.crearReserva() → redirigir a confirmación
+     */
+
+    // Verificar que haya sesión y que sea alumno
+    if (!Auth.verificarSesion()) {
+        // verificarSesion ya redirige al login si no hay sesión
+    } else if (!Auth.verificarRol('alumno')) {
+        // verificarRol ya redirige a la vista correcta si no es alumno
+    } else {
+        // Inicializar la página
+        inicializar();
+    }
+
+    async function inicializar() {
+        // Configurar botón de cerrar sesión
+        document.getElementById('btn-logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            Auth.logout();
+            window.location.href = '../index.html';
+        });
+
+        // Configurar filtros: cuando cambian, recargar el catálogo
+        document.getElementById('filtro-busqueda').addEventListener('input', cargarCatalogo);
+        document.getElementById('filtro-categoria').addEventListener('change', cargarCatalogo);
+        document.getElementById('filtro-disponible').addEventListener('change', cargarCatalogo);
+
+        // Configurar formulario de reserva
+        document.getElementById('reserva-form').addEventListener('submit', confirmarReserva);
+        document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
+
+        // Fecha mínima de retiro: hoy
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fecha-retiro').min = hoy;
+        document.getElementById('fecha-devolucion').min = hoy;
+
+        // Cargar y mostrar el catálogo
+        await cargarCatalogo();
+        actualizarCarritoVisual();
+    }
+
+    /**
+     * cargarCatalogo()
+     * Lee los filtros, obtiene los equipos de datos.json,
+     * los filtra y llama a renderizarEquipos() para mostrarlos.
+     */
+    async function cargarCatalogo() {
+        let equipos = await Datos.obtenerEquipos();
+
+        // Filtro por búsqueda de texto (nombre o código)
+        const busqueda = document.getElementById('filtro-busqueda').value.toLowerCase();
+        if (busqueda) {
+            equipos = equipos.filter(e =>
+                e.nombre.toLowerCase().includes(busqueda) ||
+                e.codigoBarras.toLowerCase().includes(busqueda)
+            );
+        }
+
+        // Filtro por categoría
+        const categoria = document.getElementById('filtro-categoria').value;
+        if (categoria) {
+            equipos = equipos.filter(e => e.categoria === categoria);
+        }
+
+        // Filtro por disponibilidad
+        const soloDisponibles = document.getElementById('filtro-disponible').value === 'true';
+        if (soloDisponibles) {
+            equipos = equipos.filter(e => e.estado === 'disponible');
+        }
+
+        renderizarEquipos(equipos);
+    }
+
+    /**
+     * renderizarEquipos(equipos)
+     * Genera las tarjetas HTML de cada equipo y las inserta en el catálogo.
+     * Cada tarjeta tiene un botón para agregar/quitar del carrito.
+     *
+     * @param {Array} equipos - Array de objetos equipo a mostrar
+     */
+    function renderizarEquipos(equipos) {
+        const contenedor = document.getElementById('catalogo-equipos');
+
+        if (equipos.length === 0) {
+            contenedor.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#64748b;">No se encontraron equipos con esos filtros.</p>';
+            return;
+        }
+
+        contenedor.innerHTML = '';
+        const usuario = Auth.getUsuarioActual();
+
+        equipos.forEach(function(equipo) {
+            const enCarrito = Carrito.estaEnCarrito(equipo.id);
+            const noDisponible = equipo.estado !== 'disponible';
+            const esPremium = equipo.gama === 'premium';
+            const anioMinimo = equipo.anioMinimo;
+            const puedeReservar = !noDisponible && !(usuario.rol === 'alumno' && usuario.anio <= 2 && esPremium);
+
+            // Crear elemento tarjeta
+            const tarjeta = document.createElement('article');
+            tarjeta.className = 'card-equipo';
+            if (enCarrito) tarjeta.className += ' en-carrito';
+            if (noDisponible || !puedeReservar) tarjeta.className += ' no-disponible';
+
+            // Clase CSS para la gama (premium/standard)
+            const gamaClass = esPremium ? 'gama-premium' : 'gama-standard';
+
+            // Texto del estado del equipo
+            const estadoText = {
+                disponible: 'Disponible',
+                prestado: 'Prestado',
+                mantenimiento: 'En mantenimiento',
+                baja: 'Dado de baja'
+            };
+            const estadoClass = 'estado-' + equipo.estado;
+
+            // Texto del botón según el estado
+            let botonTexto = '+ Agregar al Carrito';
+            let botonDisabled = false;
+            if (enCarrito) {
+                botonTexto = 'Quitar del Carrito';
+            } else if (noDisponible) {
+                botonTexto = estadoText[equipo.estado] || 'No disponible';
+                botonDisabled = true;
+            } else if (!puedeReservar) {
+                botonTexto = 'Gama alta (requiere 3er anio)';
+                botonDisabled = true;
+            } else if (Carrito.cantidadEnCarrito() >= Carrito.MAX_EQUIPOS) {
+                botonTexto = 'Carrito lleno';
+                botonDisabled = true;
+            }
+
+            tarjeta.innerHTML =
+                '<h4>' + equipo.nombre + '</h4>' +
+                '<p><span class="badge-gama ' + gamaClass + '">' + equipo.gama + '</span> ' +
+                '<span class="estado-badge ' + estadoClass + '">' + (estadoText[equipo.estado] || equipo.estado) + '</span></p>' +
+                '<p style="font-size:0.85rem;color:#64748b;">' + equipo.codigoBarras + ' | Min. ' + equipo.anioMinimo + 'er anio</p>' +
+                '<button type="button" ' + (botonDisabled ? 'disabled' : '') + ' onclick="toggleCarrito(\'' + equipo.id + '\')">' + botonTexto + '</button>';
+
+            contenedor.appendChild(tarjeta);
+        });
+    }
+
+    /**
+     * toggleCarrito(equipoId)
+     * Agrega o quita un equipo del carrito según corresponda.
+     * Se llama al hacer clic en el botón de una tarjeta.
+     *
+     * @param {string} equipoId - ID del equipo
+     */
+    async function toggleCarrito(equipoId) {
+        if (Carrito.estaEnCarrito(equipoId)) {
+            Carrito.quitarDelCarrito(equipoId);
+        } else {
+            const resultado = await Carrito.agregarAlCarrito(equipoId);
+            if (!resultado.exito) {
+                alert(resultado.mensaje);
+                return;
+            }
+        }
+        // Actualizar tanto el catálogo (botones) como el carrito visual
+        await cargarCatalogo();
+        actualizarCarritoVisual();
+    }
+
+    /**
+     * actualizarCarritoVisual()
+     * Dibuja la lista de equipos en el carrito en la columna derecha.
+     * Muestra el nombre de cada equipo y un botón para quitarlo.
+     */
+    async function actualizarCarritoVisual() {
+        const contenedor = document.getElementById('cart-list');
+        const contador = document.getElementById('cart-count');
+        const carrito = Carrito.obtenerCarrito();
+        contador.textContent = carrito.length;
+
+        if (carrito.length === 0) {
+            contenedor.innerHTML = '<p style="color:#64748b;font-size:0.9rem;">No hay equipos seleccionados.</p>';
+            return;
+        }
+
+        // Obtener los datos completos de cada equipo en el carrito
+        contenedor.innerHTML = '';
+        for (const id of carrito) {
+            const equipo = await Datos.buscarEquipoPorId(id);
+            if (!equipo) continue;
+
+            const div = document.createElement('div');
+            div.className = 'cart-item';
+            div.innerHTML =
+                '<div>' +
+                    '<span class="cart-item-nombre">' + equipo.nombre + '</span><br>' +
+                    '<span class="cart-item-codigo">' + equipo.codigoBarras + '</span>' +
+                '</div>' +
+                '<button class="cart-item-remove" onclick="toggleCarrito(\'' + id + '\')" title="Quitar">X</button>';
+            contenedor.appendChild(div);
+        }
+    }
+
+    /**
+     * confirmarReserva(e)
+     * Se ejecuta al enviar el formulario de reserva.
+     * Valida las fechas y llama a Reservas.crearReserva().
+     * Si todo sale bien, redirige a la página de confirmación.
+     *
+     * @param {Event} e - Evento submit del formulario
+     */
+    async function confirmarReserva(e) {
+        e.preventDefault();
+
+        const mensajeEl = document.getElementById('reserva-mensaje');
+        mensajeEl.classList.remove('visible');
+
+        const carrito = Carrito.obtenerCarrito();
+        const fechaRetiro = document.getElementById('fecha-retiro').value;
+        const fechaDevolucion = document.getElementById('fecha-devolucion').value;
+
+        // Validar que haya equipos en el carrito
+        if (carrito.length === 0) {
+            mensajeEl.textContent = 'Agrega al menos un equipo al carrito.';
+            mensajeEl.classList.add('visible');
+            return;
+        }
+
+        try {
+            // Crear la reserva (esto guarda en localStorage y limpia el carrito)
+            const reserva = await Reservas.crearReserva(carrito, fechaRetiro, fechaDevolucion);
+
+            // Guardar el ID de la reserva recién creada para la página de confirmación
+            localStorage.setItem('cinestock_ultima_reserva', reserva.id);
+
+            // Redirigir a la página de confirmación
+            window.location.href = 'confirmacion.html';
+        } catch (error) {
+            mensajeEl.textContent = error.message;
+            mensajeEl.classList.add('visible');
+        }
+    }
+
+    /**
+     * limpiarFormulario()
+     * Resetea el formulario: limpia fechas, vacía el carrito y recarga el catálogo.
+     */
+    function limpiarFormulario() {
+        document.getElementById('fecha-retiro').value = '';
+        document.getElementById('fecha-devolucion').value = '';
+        document.getElementById('reserva-mensaje').classList.remove('visible');
+        Carrito.limpiarCarrito();
+        cargarCatalogo();
+        actualizarCarritoVisual();
+    }
+    </script>
 </body>
 </html>
