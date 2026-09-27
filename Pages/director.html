@@ -3,64 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineStock - Módulo Director</title>
+    <title>CineStock - Modulo Director</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            margin: 0.5rem 0;
+        }
+        .stat-card p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        .stat-disponible h3 { color: #16a34a; }
+        .stat-prestado h3 { color: #0284c7; }
+        .stat-mantenimiento h3 { color: #d97706; }
+        .stat-vencido h3 { color: #dc2626; }
+        .reporte-mora {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        .reporte-mora.visible { display: block; }
+        .reporte-mora h3 { color: #991b1b; margin-top: 0; }
+    </style>
 </head>
 <body>
     <header>
         <h1>CineStock - Tablero de Control</h1>
         <nav>
             <ul>
-                <li><a href="../index.html">Cerrar Sesión</a></li>
-                <li><a href="alumno.html">Vista Alumno</a></li>
-                <li><a href="panolero.html">Vista Pañolero</a></li>
-                <li><a href="director.html" class="active">Vista Director</a></li>
+                <li><a href="#" id="btn-logout">Cerrar Sesion</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
+        <!-- Estadísticas generales -->
         <section>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Ocupación e Inventario General</h2>
-                <button type="button" class="btn-action">Generar Reporte de Mora</button>
+            <h2>Resumen del Sistema</h2>
+            <div class="stats-grid" id="stats-grid">
+                <!-- Se llena dinámicamente con JavaScript -->
+            </div>
+        </section>
+
+        <!-- Inventario de equipos -->
+        <section>
+            <div class="header-accion" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <h2>Inventario General</h2>
+                <button type="button" class="btn-action" id="btn-reporte-mora">Generar Reporte de Mora</button>
             </div>
             <br>
+            <div class="tabla-wrapper">
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>ID Equipo</th>
                         <th>Nombre del Equipo</th>
-                        <th>Ocupación / Estado</th>
-                        <th>Total Préstamos</th>
+                        <th>Categoria</th>
+                        <th>Gama</th>
+                        <th>Estado</th>
+                        <th>Total Prestamos</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>EQ-001</td>
-                        <td>Cámara Canon EOS 80D</td>
-                        <td>Reservado</td>
-                        <td>42 veces</td>
-                    </tr>
-                    <tr>
-                        <td>EQ-002</td>
-                        <td>Kit Luces LED Ledgo</td>
-                        <td>En Reparación</td>
-                        <td>18 veces</td>
-                    </tr>
-                    <tr>
-                        <td>EQ-003</td>
-                        <td>Micrófono Shotgun Rode</td>
-                        <td>Disponible</td>
-                        <td>55 veces</td>
-                    </tr>
+                <tbody id="inventario-tabla">
+                    <!-- Se llena dinámicamente con JavaScript -->
                 </tbody>
             </table>
+            </div>
+        </section>
+
+        <!-- Reporte de mora (se muestra/oculta con el botón) -->
+        <section>
+            <div id="reporte-mora" class="reporte-mora">
+                <h3>Reporte de Reservas Vencidas</h3>
+                <div id="mora-contenido"></div>
+            </div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2026 CineStock - Escuela Lumière</p>
-    </footer>
+    <script src="../js/datos.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/reservas.js"></script>
+
+    <script>
+    /**
+     * ================================================================
+     * PÁGINA DEL DIRECTOR: DASHBOARD Y REPORTES
+     * ================================================================
+     * El director tiene una visión general del sistema:
+     *   1. Estadísticas: cuántos equipos hay disponibles, prestados,
+     *      en mantenimiento, y reservas vencidas
+     *   2. Inventario completo: todos los equipos con su estado y
+     *      cantidad de préstamos históricos
+     *   3. Reporte de mora: lista de reservas cuya fecha de devolución
+     *      ya pasó y aún no fueron devueltas
+     *
+     * ESTADÍSTICAS CALCULADAS:
+     *   - Disponibles: equipos con estado "disponible"
+     *   - Prestados: equipos con estado "prestado"
+     *   - En mantenimiento: equipos con estado "mantenimiento"
+     *   - Reservas vencidas: reservas con fechaDevolucion < hoy y
+     *     estado reservado o entregado
+     */
+
+    // Verificar sesión y rol de director
+    if (!Auth.verificarSesion()) {
+        // Redirige al login
+    } else if (!Auth.verificarRol('director')) {
+        // Redirige a la vista correcta si no es director
+    } else {
+        inicializarDirector();
+    }
+
+    async function inicializarDirector() {
+        // Configurar botón de cerrar sesión
+        document.getElementById('btn-logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            Auth.logout();
+            window.location.href = '../index.html';
+        });
+
+        // Configurar botón de reporte de mora
+        document.getElementById('btn-reporte-mora').addEventListener('click', toggleReporteMora);
+
+        // Cargar datos del dashboard
+        await cargarEstadisticas();
+        await cargarInventario();
+    }
+
+    /**
+     * cargarEstadisticas()
+     * Calcula y muestra las estadísticas generales del sistema:
+     * - Cantidad de equipos por estado
+     * - Cantidad de reservas vencidas
+     */
+    async function cargarEstadisticas() {
+        const equipos = await Datos.obtenerEquipos();
+        const reservasVencidas = await Reservas.obtenerReservasVencidas();
+
+        // Contar equipos por estado usando filter()
+        const disponibles = equipos.filter(e => e.estado === 'disponible').length;
+        const prestados = equipos.filter(e => e.estado === 'prestado').length;
+        const mantenimiento = equipos.filter(e => e.estado === 'mantenimiento').length;
+
+        const statsGrid = document.getElementById('stats-grid');
+        statsGrid.innerHTML =
+            '<div class="stat-card stat-disponible">' +
+                '<p>Equipos Disponibles</p>' +
+                '<h3>' + disponibles + '</h3>' +
+                '<p>de ' + equipos.length + ' total</p>' +
+            '</div>' +
+            '<div class="stat-card stat-prestado">' +
+                '<p>Equipos Prestados</p>' +
+                '<h3>' + prestados + '</h3>' +
+            '</div>' +
+            '<div class="stat-card stat-mantenimiento">' +
+                '<p>En Mantenimiento</p>' +
+                '<h3>' + mantenimiento + '</h3>' +
+            '</div>' +
+            '<div class="stat-card stat-vencido">' +
+                '<p>Reservas Vencidas</p>' +
+                '<h3>' + reservasVencidas.length + '</h3>' +
+            '</div>';
+    }
+
+    /**
+     * cargarInventario()
+     * Muestra la tabla completa de equipos con su estado actual
+     * y la cantidad total de préstamos históricos de cada uno.
+     */
+    async function cargarInventario() {
+        const equipos = await Datos.obtenerEquipos();
+        const tbody = document.getElementById('inventario-tabla');
+
+        tbody.innerHTML = '';
+
+        for (const equipo of equipos) {
+            // Contar préstamos históricos de este equipo
+            const totalPrestamos = await Reservas.contarPrestamosPorEquipo(equipo.id);
+
+            // Badge de estado con color
+            const badges = {
+                disponible: '<span class="badge success">Disponible</span>',
+                prestado: '<span class="badge" style="background:#0284c7;">Prestado</span>',
+                mantenimiento: '<span class="badge warning">Mantenimiento</span>',
+                baja: '<span class="badge danger">Baja</span>'
+            };
+
+            const fila = document.createElement('tr');
+            fila.innerHTML =
+                '<td>' + equipo.codigoBarras + '</td>' +
+                '<td>' + equipo.nombre + '</td>' +
+                '<td style="text-transform:capitalize;">' + equipo.categoria + '</td>' +
+                '<td style="text-transform:capitalize;">' + equipo.gama + '</td>' +
+                '<td>' + (badges[equipo.estado] || equipo.estado) + '</td>' +
+                '<td>' + totalPrestamos + ' veces</td>';
+
+            tbody.appendChild(fila);
+        }
+    }
+
+    /**
+     * toggleReporteMora()
+     * Muestra u oculta el reporte de reservas vencidas.
+     * Al mostrarlo, carga las reservas cuya fecha de devolución ya pasó.
+     */
+    async function toggleReporteMora() {
+        const reporte = document.getElementById('reporte-mora');
+        const contenido = document.getElementById('mora-contenido');
+
+        // Si ya está visible, ocultarlo
+        if (reporte.classList.contains('visible')) {
+            reporte.classList.remove('visible');
+            return;
+        }
+
+        // Cargar reservas vencidas
+        const vencidas = await Reservas.obtenerReservasVencidas();
+
+        if (vencidas.length === 0) {
+            contenido.innerHTML = '<p>No hay reservas vencidas en este momento.</p>';
+        } else {
+            let html = '<div class="tabla-wrapper"><table class="data-table"><thead><tr>' +
+                '<th>Reserva</th><th>Alumno</th><th>Equipos</th><th>Vencimiento</th><th>Estado</th>' +
+                '</tr></thead><tbody>';
+
+            for (const reserva of vencidas) {
+                const usuario = await Datos.buscarUsuarioPorId(reserva.userId);
+                const equipos = await Reservas.resolverEquiposReserva(reserva);
+                const nombres = equipos.map(e => e.nombre).join(', ');
+
+                const estadoTexto = reserva.estado === 'reservado' ? 'Nunca retirado' : 'Entregado - No devuelto';
+
+                html += '<tr>' +
+                    '<td>' + reserva.id.toUpperCase() + '</td>' +
+                    '<td>' + (usuario ? usuario.nombre : 'N/A') + '</td>' +
+                    '<td>' + nombres + '</td>' +
+                    '<td>' + reserva.fechaDevolucion + '</td>' +
+                    '<td><span class="badge danger">' + estadoTexto + '</span></td>' +
+                    '</tr>';
+            }
+
+            html += '</tbody></table></div>';
+            contenido.innerHTML = html;
+        }
+
+        reporte.classList.add('visible');
+    }
+    </script>
 </body>
 </html>

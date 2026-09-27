@@ -1,0 +1,330 @@
+{
+  "usuarios": [
+    {
+      "id": "u-001",
+      "matricula": "2025-1001",
+      "password": "cine123",
+      "nombre": "Juan Perez",
+      "rol": "alumno",
+      "anio": 2,
+      "carrera": "Cine"
+    },
+    {
+      "id": "u-002",
+      "matricula": "2024-1002",
+      "password": "cine123",
+      "nombre": "Maria Garcia",
+      "rol": "alumno",
+      "anio": 3,
+      "carrera": "Fotografia"
+    },
+    {
+      "id": "u-003",
+      "matricula": "2023-1003",
+      "password": "cine123",
+      "nombre": "Carlos Lopez",
+      "rol": "alumno",
+      "anio": 4,
+      "carrera": "Cine"
+    },
+    {
+      "id": "u-004",
+      "matricula": "2025-1004",
+      "password": "cine123",
+      "nombre": "Ana Martinez",
+      "rol": "alumno",
+      "anio": 1,
+      "carrera": "Cine"
+    },
+    {
+      "id": "u-005",
+      "matricula": "ADMIN-001",
+      "password": "panol2026",
+      "nombre": "Ricardo Gomez",
+      "rol": "panolero",
+      "anio": 0,
+      "carrera": ""
+    },
+    {
+      "id": "u-006",
+      "matricula": "ADMIN-002",
+      "password": "panol2026",
+      "nombre": "Sofia Ruiz",
+      "rol": "panolero",
+      "anio": 0,
+      "carrera": ""
+    },
+    {
+      "id": "u-007",
+      "matricula": "DIR-001",
+      "password": "director2026",
+      "nombre": "Laura Fernandez",
+      "rol": "director",
+      "anio": 0,
+      "carrera": ""
+    },
+    {
+      "id": "u-008",
+      "matricula": "DIR-002",
+      "password": "director2026",
+      "nombre": "Martin Silva",
+      "rol": "director",
+      "anio": 0,
+      "carrera": ""
+    }
+  ],
+  "equipos": [
+    {
+      "id": "g-001",
+      "codigoBarras": "CAM-001",
+      "nombre": "Camara Canon EOS 80D",
+      "categoria": "camara",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "sensor": "APS-C", "megapixeles": 24.2 }
+    },
+    {
+      "id": "g-002",
+      "codigoBarras": "CAM-002",
+      "nombre": "Camara Sony Alpha A7 III",
+      "categoria": "camara",
+      "gama": "premium",
+      "estado": "disponible",
+      "anioMinimo": 3,
+      "especificaciones": { "sensor": "Full Frame", "megapixeles": 24.2 }
+    },
+    {
+      "id": "g-003",
+      "codigoBarras": "CAM-003",
+      "nombre": "Blackmagic Pocket 4K",
+      "categoria": "camara",
+      "gama": "premium",
+      "estado": "mantenimiento",
+      "anioMinimo": 3,
+      "especificaciones": { "sensor": "Micro 4/3", "resolucion": "4K" }
+    },
+    {
+      "id": "g-004",
+      "codigoBarras": "CAM-004",
+      "nombre": "Panasonic Lumix GH5",
+      "categoria": "camara",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "sensor": "Micro 4/3", "resolucion": "4K" }
+    },
+    {
+      "id": "g-005",
+      "codigoBarras": "CAM-005",
+      "nombre": "Camara Sony A6400",
+      "categoria": "camara",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 1,
+      "especificaciones": { "sensor": "APS-C", "megapixeles": 24.2 }
+    },
+    {
+      "id": "g-006",
+      "codigoBarras": "LEN-001",
+      "nombre": "Lente Canon 50mm f/1.8",
+      "categoria": "lente",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 1,
+      "especificaciones": { "montura": "Canon EF", "distanciaFocal": "50mm" }
+    },
+    {
+      "id": "g-007",
+      "codigoBarras": "LEN-002",
+      "nombre": "Lente Sigma 18-35mm f/1.8",
+      "categoria": "lente",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "montura": "Canon EF", "distanciaFocal": "18-35mm" }
+    },
+    {
+      "id": "g-008",
+      "codigoBarras": "LEN-003",
+      "nombre": "Lente Sony 24-70mm f/2.8",
+      "categoria": "lente",
+      "gama": "premium",
+      "estado": "prestado",
+      "anioMinimo": 3,
+      "especificaciones": { "montura": "Sony E", "distanciaFocal": "24-70mm" }
+    },
+    {
+      "id": "g-009",
+      "codigoBarras": "LEN-004",
+      "nombre": "Lente Canon 85mm f/1.4",
+      "categoria": "lente",
+      "gama": "premium",
+      "estado": "disponible",
+      "anioMinimo": 3,
+      "especificaciones": { "montura": "Canon RF", "distanciaFocal": "85mm" }
+    },
+    {
+      "id": "g-010",
+      "codigoBarras": "ILU-001",
+      "nombre": "Kit Luces LED Ledgo",
+      "categoria": "iluminacion",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 1,
+      "especificaciones": { "potencia": "100W c/u", "tipo": "LED" }
+    },
+    {
+      "id": "g-011",
+      "codigoBarras": "ILU-002",
+      "nombre": "Aputure Amaran 100d",
+      "categoria": "iluminacion",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "potencia": "100W", "tipo": "LED daylight" }
+    },
+    {
+      "id": "g-012",
+      "codigoBarras": "ILU-003",
+      "nombre": "Panel LED Godox 500",
+      "categoria": "iluminacion",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 1,
+      "especificaciones": { "potencia": "50W", "tipo": "LED panel" }
+    },
+    {
+      "id": "g-013",
+      "codigoBarras": "ILU-004",
+      "nombre": "Fresnel Halogeno 650W",
+      "categoria": "iluminacion",
+      "gama": "standard",
+      "estado": "mantenimiento",
+      "anioMinimo": 2,
+      "especificaciones": { "potencia": "650W", "tipo": "Halogeno" }
+    },
+    {
+      "id": "g-014",
+      "codigoBarras": "TRI-001",
+      "nombre": "Tripode Manfrotto 504HD",
+      "categoria": "tripode",
+      "gama": "premium",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "alturaMax": "170cm", "peso": "4.2kg" }
+    },
+    {
+      "id": "g-015",
+      "codigoBarras": "TRI-002",
+      "nombre": "Monopie Benro Video",
+      "categoria": "tripode",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 1,
+      "especificaciones": { "alturaMax": "160cm", "peso": "1.2kg" }
+    },
+    {
+      "id": "g-016",
+      "codigoBarras": "TRI-003",
+      "nombre": "Estabilizador Ronin S",
+      "categoria": "tripode",
+      "gama": "premium",
+      "estado": "prestado",
+      "anioMinimo": 3,
+      "especificaciones": { "pesoMax": "3.6kg", "autonomia": "12h" }
+    },
+    {
+      "id": "g-017",
+      "codigoBarras": "AUD-001",
+      "nombre": "Microfono Shotgun Rode NTG2",
+      "categoria": "audio",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "tipo": "Canon", "polar": "Cardioide" }
+    },
+    {
+      "id": "g-018",
+      "codigoBarras": "AUD-002",
+      "nombre": "Microfono Lavalier Sennheiser",
+      "categoria": "audio",
+      "gama": "standard",
+      "estado": "disponible",
+      "anioMinimo": 1,
+      "especificaciones": { "tipo": "Lavalier", "polar": "Omnidireccional" }
+    },
+    {
+      "id": "g-019",
+      "codigoBarras": "AUD-003",
+      "nombre": "Grabador Zoom H5",
+      "categoria": "audio",
+      "gama": "premium",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "tipo": "Grabador", "canales": 4 }
+    },
+    {
+      "id": "g-020",
+      "codigoBarras": "AUD-004",
+      "nombre": "Kit Microfono Rode Wireless GO II",
+      "categoria": "audio",
+      "gama": "premium",
+      "estado": "disponible",
+      "anioMinimo": 2,
+      "especificaciones": { "tipo": "Inalambrico", "polar": "Cardioide" }
+    }
+  ],
+  "reservas": [
+    {
+      "id": "co-001",
+      "userId": "u-001",
+      "items": ["g-001", "g-006", "g-010"],
+      "fechaRetiro": "2026-09-10",
+      "fechaDevolucion": "2026-09-12",
+      "estado": "reservado",
+      "notas": "",
+      "createdAt": "2026-09-01T10:00:00Z"
+    },
+    {
+      "id": "co-002",
+      "userId": "u-002",
+      "items": ["g-002", "g-009"],
+      "fechaRetiro": "2026-09-05",
+      "fechaDevolucion": "2026-09-07",
+      "estado": "entregado",
+      "notas": "",
+      "createdAt": "2026-09-01T11:00:00Z"
+    },
+    {
+      "id": "co-003",
+      "userId": "u-003",
+      "items": ["g-014", "g-017", "g-011"],
+      "fechaRetiro": "2026-09-01",
+      "fechaDevolucion": "2026-09-03",
+      "estado": "devuelto_ok",
+      "notas": "",
+      "createdAt": "2026-08-28T09:00:00Z"
+    },
+    {
+      "id": "co-004",
+      "userId": "u-004",
+      "items": ["g-004"],
+      "fechaRetiro": "2026-08-20",
+      "fechaDevolucion": "2026-08-22",
+      "estado": "devuelto_faltantes",
+      "notas": "Falta cable HDMI",
+      "createdAt": "2026-08-18T08:00:00Z"
+    },
+    {
+      "id": "co-005",
+      "userId": "u-001",
+      "items": ["g-015", "g-018"],
+      "fechaRetiro": "2026-09-15",
+      "fechaDevolucion": "2026-09-17",
+      "estado": "reservado",
+      "notas": "",
+      "createdAt": "2026-09-10T14:00:00Z"
+    }
+  ]
+}

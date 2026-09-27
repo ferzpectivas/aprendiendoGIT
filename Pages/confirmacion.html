@@ -5,6 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineStock - Reserva Confirmada</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .remito {
+            background: white;
+            border: 2px solid #1e293b;
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        .remito h2 {
+            text-align: center;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .remito-detalle {
+            margin-bottom: 0.5rem;
+        }
+        .remito-detalle strong {
+            display: inline-block;
+            width: 180px;
+        }
+        .remito-items {
+            margin: 1rem 0;
+            padding: 0;
+            list-style: none;
+        }
+        .remito-items li {
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .remito-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid #1e293b;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        .btn-volver {
+            display: block;
+            width: fit-content;
+            margin: 1.5rem auto 0;
+            padding: 0.6rem 2rem;
+            background: #0284c7;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -12,22 +62,107 @@
     </header>
 
     <main>
-        <section class="confirmation-card">
-            <h2>¡Reserva Confirmada con Éxito!</h2>
-            <br>
-            <p>Se ha generado el remito digital para tu solicitud de equipamiento.</p>
-            <br>
-            <div class="remito-detail">
-                <p><strong>N° de Matrícula:</strong> EST-2026-889</p>
-                <p><strong>Estado:</strong> Solicitud Registrada</p>
-            </div>
-            <br>
-            <a href="alumno.html" class="btn-primary">Volver al Módulo Alumno</a>
-        </section>
+        <!-- El contenido se llena dinámicamente con JavaScript -->
+        <div id="confirmacion-contenido">
+            <p style="text-align:center;">Cargando...</p>
+        </div>
     </main>
 
-    <footer>
-        <p>&copy; 2026 CineStock - Escuela Lumière</p>
-    </footer>
+    <script src="../js/datos.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/reservas.js"></script>
+
+    <script>
+    /**
+     * ================================================================
+     * PÁGINA DE CONFIRMACIÓN DE RESERVA
+     * ================================================================
+     * Muestra los detalles de la reserva que acaba de crear el alumno.
+     * Lee el ID de la reserva desde localStorage (cinestock_ultima_reserva)
+     * y muestra un "remito" digital con todos los datos.
+     *
+     * FLUJO:
+     *   1. alumno.html guarda el ID de la reserva en localStorage
+     *   2. Esta página lee ese ID
+     *   3. Busca la reserva completa en datos.json (via Reservas)
+     *   4. Resuelve los IDs de equipos a nombres
+     *   5. Muestra el remito con todos los datos
+     */
+
+    // Verificar sesión
+    if (!Auth.verificarSesion()) {
+        // Redirige al login si no hay sesión
+    } else {
+        mostrarConfirmacion();
+    }
+
+    async function mostrarConfirmacion() {
+        const contenedor = document.getElementById('confirmacion-contenido');
+
+        // Obtener el ID de la reserva recién creada
+        const reservaId = localStorage.getItem('cinestock_ultima_reserva');
+
+        if (!reservaId) {
+            contenedor.innerHTML =
+                '<section class="confirmation-card">' +
+                    '<h2>No se encontró la reserva</h2>' +
+                    '<p>Volvé al catálogo para crear una nueva reserva.</p>' +
+                    '<a href="alumno.html" class="btn-volver">Volver al Catálogo</a>' +
+                '</section>';
+            return;
+        }
+
+        // Buscar la reserva completa
+        const todasLasReservas = await Reservas.obtenerTodasLasReservas();
+        const reserva = todasLasReservas.find(r => r.id === reservaId);
+
+        if (!reserva) {
+            contenedor.innerHTML =
+                '<section class="confirmation-card">' +
+                    '<h2>Reserva no encontrada</h2>' +
+                    '<p>La reserva podría haber sido eliminada.</p>' +
+                    '<a href="alumno.html" class="btn-volver">Volver al Catálogo</a>' +
+                '</section>';
+            return;
+        }
+
+        // Obtener datos del usuario
+        const usuario = await Datos.buscarUsuarioPorId(reserva.userId);
+
+        // Resolver los IDs de equipos a objetos completos
+        const equiposReserva = await Reservas.resolverEquiposReserva(reserva);
+
+        // Armar el HTML del remito
+        const fechaCreacion = new Date(reserva.createdAt).toLocaleDateString('es-AR');
+
+        contenedor.innerHTML =
+            '<section class="remito">' +
+                '<h2>REMITO DE RESERVA</h2>' +
+                '<div class="remito-detalle"><strong>N° de Reserva:</strong> ' + reserva.id.toUpperCase() + '</div>' +
+                '<div class="remito-detalle"><strong>Fecha de Solicitud:</strong> ' + fechaCreacion + '</div>' +
+                '<div class="remito-detalle"><strong>Alumno:</strong> ' + (usuario ? usuario.nombre : 'Desconocido') + '</div>' +
+                '<div class="remito-detalle"><strong>Matrícula:</strong> ' + (usuario ? usuario.matricula : 'N/A') + '</div>' +
+                '<div class="remito-detalle"><strong>Estado:</strong> Reservado</div>' +
+                '<br>' +
+                '<div class="remito-detalle"><strong>Fecha de Retiro:</strong> ' + reserva.fechaRetiro + '</div>' +
+                '<div class="remito-detalle"><strong>Fecha de Devolución:</strong> ' + reserva.fechaDevolucion + '</div>' +
+                '<br>' +
+                '<h3>Equipos Reservados (' + equiposReserva.length + '):</h3>' +
+                '<ul class="remito-items">' +
+                    equiposReserva.map(function(e) {
+                        return '<li>' + e.nombre + ' (' + e.codigoBarras + ')</li>';
+                    }).join('') +
+                '</ul>' +
+                '<div class="remito-footer">' +
+                    'Presentá este remito en el depósito al retirar tu equipamiento.<br>' +
+                    'Escuela de Artes Audiovisuales "Lumiere"' +
+                '</div>' +
+            '</section>' +
+            '<a href="alumno.html" class="btn-volver">Volver al Catálogo</a>';
+
+        // Limpiar el ID de la reserva de localStorage (ya no se necesita)
+        localStorage.removeItem('cinestock_ultima_reserva');
+    }
+    </script>
 </body>
 </html>
