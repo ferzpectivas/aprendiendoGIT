@@ -1,0 +1,23 @@
+{
+  "name": "cinestock",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de prestamo audiovisual - Escuela Lumiere",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "jest --passWithNoTests"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  }
+}

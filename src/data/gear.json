@@ -1,0 +1,282 @@
+[
+  {
+    "id": "g-001",
+    "codigoBarras": "CAM-001",
+    "nombre": "Camara Canon EOS 80D",
+    "categoria": "camara",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "sensor": "APS-C",
+      "megapixeles": 24.2
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-002",
+    "codigoBarras": "CAM-002",
+    "nombre": "Camara Sony Alpha A7 III",
+    "categoria": "camara",
+    "gama": "premium",
+    "estado": "disponible",
+    "anioMinimo": 3,
+    "especificaciones": {
+      "sensor": "Full Frame",
+      "megapixeles": 24.2
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-003",
+    "codigoBarras": "CAM-003",
+    "nombre": "Blackmagic Pocket 4K",
+    "categoria": "camara",
+    "gama": "premium",
+    "estado": "mantenimiento",
+    "anioMinimo": 3,
+    "especificaciones": {
+      "sensor": "Micro 4/3",
+      "resolucion": "4K"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-004",
+    "codigoBarras": "CAM-004",
+    "nombre": "Panasonic Lumix GH5",
+    "categoria": "camara",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "sensor": "Micro 4/3",
+      "resolucion": "4K"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-005",
+    "codigoBarras": "CAM-005",
+    "nombre": "Camara Sony A6400",
+    "categoria": "camara",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 1,
+    "especificaciones": {
+      "sensor": "APS-C",
+      "megapixeles": 24.2
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-006",
+    "codigoBarras": "LEN-001",
+    "nombre": "Lente Canon 50mm f/1.8",
+    "categoria": "lente",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 1,
+    "especificaciones": {
+      "montura": "Canon EF",
+      "distanciaFocal": "50mm"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-007",
+    "codigoBarras": "LEN-002",
+    "nombre": "Lente Sigma 18-35mm f/1.8",
+    "categoria": "lente",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "montura": "Canon EF",
+      "distanciaFocal": "18-35mm"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-008",
+    "codigoBarras": "LEN-003",
+    "nombre": "Lente Sony 24-70mm f/2.8",
+    "categoria": "lente",
+    "gama": "premium",
+    "estado": "prestado",
+    "anioMinimo": 3,
+    "especificaciones": {
+      "montura": "Sony E",
+      "distanciaFocal": "24-70mm"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-009",
+    "codigoBarras": "LEN-004",
+    "nombre": "Lente Canon 85mm f/1.4",
+    "categoria": "lente",
+    "gama": "premium",
+    "estado": "disponible",
+    "anioMinimo": 3,
+    "especificaciones": {
+      "montura": "Canon RF",
+      "distanciaFocal": "85mm"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-010",
+    "codigoBarras": "ILU-001",
+    "nombre": "Kit Luces LED Ledgo",
+    "categoria": "iluminacion",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 1,
+    "especificaciones": {
+      "potencia": "100W c/u",
+      "tipo": "LED"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-011",
+    "codigoBarras": "ILU-002",
+    "nombre": "Aputure Amaran 100d",
+    "categoria": "iluminacion",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "potencia": "100W",
+      "tipo": "LED daylight"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-012",
+    "codigoBarras": "ILU-003",
+    "nombre": "Panel LED Godox 500",
+    "categoria": "iluminacion",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 1,
+    "especificaciones": {
+      "potencia": "50W",
+      "tipo": "LED panel"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-013",
+    "codigoBarras": "ILU-004",
+    "nombre": "Fresnel Halogeno 650W",
+    "categoria": "iluminacion",
+    "gama": "standard",
+    "estado": "mantenimiento",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "potencia": "650W",
+      "tipo": "Halogeno"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-014",
+    "codigoBarras": "TRI-001",
+    "nombre": "Tripode Manfrotto 504HD",
+    "categoria": "tripode",
+    "gama": "premium",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "alturaMax": "170cm",
+      "peso": "4.2kg"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-015",
+    "codigoBarras": "TRI-002",
+    "nombre": "Monopie Benro Video",
+    "categoria": "tripode",
+    "gama": "standard",
+    "estado": "prestado",
+    "anioMinimo": 1,
+    "especificaciones": {
+      "alturaMax": "160cm",
+      "peso": "1.2kg"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-016",
+    "codigoBarras": "TRI-003",
+    "nombre": "Estabilizador Ronin S",
+    "categoria": "tripode",
+    "gama": "premium",
+    "estado": "prestado",
+    "anioMinimo": 3,
+    "especificaciones": {
+      "pesoMax": "3.6kg",
+      "autonomia": "12h"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-017",
+    "codigoBarras": "AUD-001",
+    "nombre": "Microfono Shotgun Rode NTG2",
+    "categoria": "audio",
+    "gama": "standard",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "tipo": "Canon",
+      "polar": "Cardioide"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-018",
+    "codigoBarras": "AUD-002",
+    "nombre": "Microfono Lavalier Sennheiser",
+    "categoria": "audio",
+    "gama": "standard",
+    "estado": "prestado",
+    "anioMinimo": 1,
+    "especificaciones": {
+      "tipo": "Lavalier",
+      "polar": "Omnidireccional"
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-019",
+    "codigoBarras": "AUD-003",
+    "nombre": "Grabador Zoom H5",
+    "categoria": "audio",
+    "gama": "premium",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "tipo": "Grabador",
+      "canales": 4
+    },
+    "imagen": ""
+  },
+  {
+    "id": "g-020",
+    "codigoBarras": "AUD-004",
+    "nombre": "Kit Microfono Rode Wireless GO II",
+    "categoria": "audio",
+    "gama": "premium",
+    "estado": "disponible",
+    "anioMinimo": 2,
+    "especificaciones": {
+      "tipo": "Inalambrico",
+      "polar": "Cardioide"
+    },
+    "imagen": ""
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "u-001",
+    "matricula": "2025-1001",
+    "password": "cine123",
+    "nombre": "Juan Perez",
+    "rol": "alumno",
+    "anio": 2,
+    "carrera": "Cine"
+  },
+  {
+    "id": "u-002",
+    "matricula": "2024-1002",
+    "password": "cine123",
+    "nombre": "Maria Garcia",
+    "rol": "alumno",
+    "anio": 3,
+    "carrera": "Fotografia"
+  },
+  {
+    "id": "u-003",
+    "matricula": "2023-1003",
+    "password": "cine123",
+    "nombre": "Carlos Lopez",
+    "rol": "alumno",
+    "anio": 4,
+    "carrera": "Cine"
+  },
+  {
+    "id": "u-004",
+    "matricula": "2025-1004",
+    "password": "cine123",
+    "nombre": "Ana Martinez",
+    "rol": "alumno",
+    "anio": 1,
+    "carrera": "Cine"
+  },
+  {
+    "id": "u-005",
+    "matricula": "ADMIN-001",
+    "password": "panol2026",
+    "nombre": "Ricardo Gomez",
+    "rol": "panolero",
+    "anio": 0,
+    "carrera": ""
+  },
+  {
+    "id": "u-006",
+    "matricula": "ADMIN-002",
+    "password": "panol2026",
+    "nombre": "Sofia Ruiz",
+    "rol": "panolero",
+    "anio": 0,
+    "carrera": ""
+  },
+  {
+    "id": "u-007",
+    "matricula": "DIR-001",
+    "password": "director2026",
+    "nombre": "Laura Fernandez",
+    "rol": "director",
+    "anio": 0,
+    "carrera": ""
+  },
+  {
+    "id": "u-008",
+    "matricula": "DIR-002",
+    "password": "director2026",
+    "nombre": "Martin Silva",
+    "rol": "director",
+    "anio": 0,
+    "carrera": ""
+  }
+]

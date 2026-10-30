@@ -103,70 +103,45 @@
 
 
 
-    <!-- Scripts en orden: primero los módulos, luego la lógica de esta página -->
-    <script src="js/datos.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/carrito.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="animacion.js"></script>
 
     <script>
-    /**
-     * Lógica de la página de login:
-     * 1. Si ya hay sesión activa, redirigir directamente al panel correspondiente
-     * 2. Al enviar el formulario, buscar el usuario en datos.json
-     * 3. Si las credenciales son correctas, redirigir según el rol
-     * 4. Si son incorrectas, mostrar mensaje de error
-     */
+    (async function() {
+        await Auth.init();
 
-    // Si el usuario ya tiene sesión, redirigir a su panel
-    (function() {
-        const usuario = Auth.getUsuarioActual();
-        if (usuario) {
-            const vistas = {
-                alumno: 'pages/alumno.html',
-                panolero: 'pages/panolero.html',
-                director: 'pages/director.html'
-            };
-            window.location.href = vistas[usuario.rol] || 'pages/alumno.html';
-        }
-    })();
-
-    // Manejar el envío del formulario de login
-    document.getElementById('login-form').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Evitar que el formulario recargue la página
-
-        const matricula = document.getElementById('usuario').value.trim();
-        const password = document.getElementById('password').value;
-        const errorEl = document.getElementById('login-error');
-
-        // Ocultar error anterior
-        errorEl.classList.remove('visible');
-
-        // Validar que ambos campos estén completos
-        if (!matricula || !password) {
-            errorEl.textContent = 'Complete todos los campos.';
-            errorEl.classList.add('visible');
+        if (Auth.isLoggedIn()) {
+            window.location.href = Auth.rutaInicio(Auth.getUsuarioActual().rol);
             return;
         }
 
-        try {
-            // Intentar hacer login (busca en datos.json)
-            const usuario = await Auth.login(matricula, password);
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-            // Login exitoso: redirigir según el rol del usuario
-            const vistas = {
-                alumno: 'pages/alumno.html',
-                panolero: 'pages/panolero.html',
-                director: 'pages/director.html'
-            };
-            window.location.href = vistas[usuario.rol] || 'pages/alumno.html';
-        } catch (error) {
-            // Credenciales incorrectas: mostrar error
-            errorEl.textContent = error.message;
-            errorEl.classList.add('visible');
-        }
-    });
+            const matricula = document.getElementById('usuario').value.trim();
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('login-error');
+
+            errorEl.classList.remove('visible');
+
+            if (!matricula || !password) {
+                errorEl.textContent = 'Complete todos los campos.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            try {
+                const usuario = await Auth.login(matricula, password);
+                window.location.href = Auth.rutaInicio(usuario.rol);
+            } catch (error) {
+                errorEl.textContent = error.message;
+                errorEl.classList.add('visible');
+            }
+        });
+    })();
     </script>
+
 </body>
 </html>

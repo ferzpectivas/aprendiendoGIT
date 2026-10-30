@@ -82,6 +82,7 @@
         </div>
     </main>
 
+    <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/reservas.js"></script>
@@ -105,20 +106,19 @@
      *   4. Renderizar cada una con sus detalles
      */
 
-    if (!Auth.verificarSesion()) {
-        // Redirige al login
-    } else if (!Auth.verificarRol('alumno')) {
-        // Redirige a la vista correcta
-    } else {
-        inicializarHistorial();
-    }
+    (async function() {
+        await Auth.init();
+        if (!Auth.verificarSesion()) return;
+        if (!Auth.verificarRol('alumno')) return;
+        await inicializarHistorial();
+    })();
 
     async function inicializarHistorial() {
         // Logout
-        document.getElementById('btn-logout').addEventListener('click', function(e) {
+        document.getElementById('btn-logout').addEventListener('click', async function(e) {
             e.preventDefault();
-            Auth.logout();
-            window.location.href = '../index.html';
+            await Auth.logout();
+            window.location.href = '/index.html';
         });
 
         await cargarHistorial();
@@ -136,12 +136,12 @@
             return;
         }
 
-        // Separar en activas (reservado/entregado) y finalizadas
+        // Separar en activas y finalizadas
         const activas = todasLasReservas.filter(function(r) {
-            return r.estado === 'reservado' || r.estado === 'entregado';
+            return ['reservado', 'entregado', 'reparacion'].includes(r.estado);
         });
         const finalizadas = todasLasReservas.filter(function(r) {
-            return r.estado === 'devuelto_ok' || r.estado === 'devuelto_faltantes';
+            return ['devuelto_ok', 'devuelto_faltantes', 'cancelado'].includes(r.estado);
         });
 
         // Ordenar por fecha de creación (más recientes primero)
@@ -180,7 +180,9 @@
             reservado: '<span class="badge warning">Reservado</span>',
             entregado: '<span class="badge" style="background:#0284c7;">Entregado</span>',
             devuelto_ok: '<span class="badge success">Devuelto OK</span>',
-            devuelto_faltantes: '<span class="badge danger">Devuelto con Faltantes</span>'
+            devuelto_faltantes: '<span class="badge danger">Devuelto con Faltantes</span>',
+            reparacion: '<span class="badge warning">En reparacion</span>',
+            cancelado: '<span class="badge" style="background:#6b7280;">Cancelado</span>'
         };
 
         // Determinar si se puede cancelar
@@ -199,6 +201,9 @@
         }
 
         const fechaCreacion = new Date(reserva.createdAt).toLocaleDateString('es-AR');
+        const notificaciones = (reserva.notificaciones || []).map(function(mensaje) {
+            return '<li>' + mensaje + '</li>';
+        }).join('');
 
         return '<div class="reserva-card">' +
             '<div class="reserva-header">' +
@@ -209,6 +214,7 @@
             '<div class="reserva-detalle"><strong>Retiro:</strong> ' + reserva.fechaRetiro + '</div>' +
             '<div class="reserva-detalle"><strong>Devolucion:</strong> ' + reserva.fechaDevolucion + '</div>' +
             (reserva.notas ? '<div class="reserva-detalle"><strong>Notas:</strong> ' + reserva.notas + '</div>' : '') +
+            (notificaciones ? '<div class="reserva-detalle" style="background:#fef3c7;border:1px solid #fde68a;border-radius:6px;padding:0.6rem;"><strong>Notificaciones:</strong><ul style="margin:0.3rem 0 0 1.2rem;">' + notificaciones + '</ul></div>' : '') +
             '<ul class="reserva-equipos">' + nombresEquipos + '</ul>' +
         '</div>';
     }

@@ -31,6 +31,7 @@
         .stat-disponible h3 { color: #16a34a; }
         .stat-prestado h3 { color: #0284c7; }
         .stat-mantenimiento h3 { color: #d97706; }
+        .stat-baja h3 { color: #991b1b; }
         .stat-vencido h3 { color: #dc2626; }
         .reporte-mora {
             background: #fef2f2;
@@ -79,10 +80,50 @@
                         <th>Categoria</th>
                         <th>Gama</th>
                         <th>Estado</th>
-                        <th>Total Prestamos</th>
+                        <th>Veces Reservado</th>
                     </tr>
                 </thead>
                 <tbody id="inventario-tabla">
+                    <!-- Se llena dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+            </div>
+        </section>
+
+        <!-- Equipos mas demandados -->
+        <section>
+            <h2>Equipos Mas Demandados</h2>
+            <div class="tabla-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID Equipo</th>
+                        <th>Nombre del Equipo</th>
+                        <th>Categoria</th>
+                        <th>Veces Reservado</th>
+                    </tr>
+                </thead>
+                <tbody id="demandados-tabla">
+                    <!-- Se llena dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+            </div>
+        </section>
+
+        <!-- Equipos fuera de servicio -->
+        <section>
+            <h2>Equipos Fuera de Servicio</h2>
+            <div class="tabla-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID Equipo</th>
+                        <th>Nombre del Equipo</th>
+                        <th>Categoria</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="fuera-servicio-tabla">
                     <!-- Se llena dinámicamente con JavaScript -->
                 </tbody>
             </table>
@@ -98,9 +139,10 @@
         </section>
     </main>
 
+    <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
-    <script src="../js/reservas.js"></script>
+    <script src="../js/director.js"></script>
 
     <script>
     /**
@@ -109,10 +151,11 @@
      * ================================================================
      * El director tiene una visión general del sistema:
      *   1. Estadísticas: cuántos equipos hay disponibles, prestados,
-     *      en mantenimiento, y reservas vencidas
+     *      en mantenimiento, dados de baja y reservas vencidas
      *   2. Inventario completo: todos los equipos con su estado y
-     *      cantidad de préstamos históricos
-     *   3. Reporte de mora: lista de reservas cuya fecha de devolución
+     *      cantidad de reservas históricas
+     *   3. Equipos más demandados y equipos fuera de servicio
+     *   4. Reporte de mora: lista de reservas cuya fecha de devolución
      *      ya pasó y aún no fueron devueltas
      *
      * ESTADÍSTICAS CALCULADAS:
@@ -123,89 +166,85 @@
      *     estado reservado o entregado
      */
 
-    // Verificar sesión y rol de director
-    if (!Auth.verificarSesion()) {
-        // Redirige al login
-    } else if (!Auth.verificarRol('director')) {
-        // Redirige a la vista correcta si no es director
-    } else {
-        inicializarDirector();
-    }
+    (async function() {
+        await Auth.init();
+        if (!Auth.verificarSesion()) return;
+        if (!Auth.verificarRol('director')) return;
+        await inicializarDirector();
+    })();
 
     async function inicializarDirector() {
         // Configurar botón de cerrar sesión
-        document.getElementById('btn-logout').addEventListener('click', function(e) {
+        document.getElementById('btn-logout').addEventListener('click', async function(e) {
             e.preventDefault();
-            Auth.logout();
-            window.location.href = '../index.html';
+            await Auth.logout();
+            window.location.href = '/index.html';
         });
 
         // Configurar botón de reporte de mora
         document.getElementById('btn-reporte-mora').addEventListener('click', toggleReporteMora);
 
         // Cargar datos del dashboard
-        await cargarEstadisticas();
-        await cargarInventario();
+        const data = await Director.obtenerDashboard();
+        cargarEstadisticas(data);
+        await cargarInventario(data);
+        cargarDemandados(data);
+        cargarFueraServicio(data);
     }
 
     /**
-     * cargarEstadisticas()
-     * Calcula y muestra las estadísticas generales del sistema:
-     * - Cantidad de equipos por estado
-     * - Cantidad de reservas vencidas
+     * cargarEstadisticas(data)
+     * Muestra las estadísticas generales calculadas por el servidor.
      */
-    async function cargarEstadisticas() {
-        const equipos = await Datos.obtenerEquipos();
-        const reservasVencidas = await Reservas.obtenerReservasVencidas();
-
-        // Contar equipos por estado usando filter()
-        const disponibles = equipos.filter(e => e.estado === 'disponible').length;
-        const prestados = equipos.filter(e => e.estado === 'prestado').length;
-        const mantenimiento = equipos.filter(e => e.estado === 'mantenimiento').length;
-
+    function cargarEstadisticas(data) {
+        const stats = data.stats;
         const statsGrid = document.getElementById('stats-grid');
+
         statsGrid.innerHTML =
             '<div class="stat-card stat-disponible">' +
                 '<p>Equipos Disponibles</p>' +
-                '<h3>' + disponibles + '</h3>' +
-                '<p>de ' + equipos.length + ' total</p>' +
+                '<h3>' + stats.disponibles + '</h3>' +
+                '<p>de ' + stats.total + ' total</p>' +
             '</div>' +
             '<div class="stat-card stat-prestado">' +
                 '<p>Equipos Prestados</p>' +
-                '<h3>' + prestados + '</h3>' +
+                '<h3>' + stats.prestados + '</h3>' +
             '</div>' +
             '<div class="stat-card stat-mantenimiento">' +
                 '<p>En Mantenimiento</p>' +
-                '<h3>' + mantenimiento + '</h3>' +
+                '<h3>' + stats.mantenimiento + '</h3>' +
+            '</div>' +
+            '<div class="stat-card stat-baja">' +
+                '<p>Dados de Baja</p>' +
+                '<h3>' + stats.baja + '</h3>' +
             '</div>' +
             '<div class="stat-card stat-vencido">' +
                 '<p>Reservas Vencidas</p>' +
-                '<h3>' + reservasVencidas.length + '</h3>' +
+                '<h3>' + stats.enMora + '</h3>' +
             '</div>';
     }
 
     /**
-     * cargarInventario()
+     * cargarInventario(data)
      * Muestra la tabla completa de equipos con su estado actual
-     * y la cantidad total de préstamos históricos de cada uno.
+     * y la cantidad total de reservas históricas de cada uno.
      */
-    async function cargarInventario() {
+    async function cargarInventario(data) {
         const equipos = await Datos.obtenerEquipos();
+        const demanda = data.demandaPorEquipo || {};
         const tbody = document.getElementById('inventario-tabla');
+
+        const badges = {
+            disponible: '<span class="badge success">Disponible</span>',
+            prestado: '<span class="badge" style="background:#0284c7;">Prestado</span>',
+            mantenimiento: '<span class="badge warning">Mantenimiento</span>',
+            baja: '<span class="badge danger">Baja</span>'
+        };
 
         tbody.innerHTML = '';
 
         for (const equipo of equipos) {
-            // Contar préstamos históricos de este equipo
-            const totalPrestamos = await Reservas.contarPrestamosPorEquipo(equipo.id);
-
-            // Badge de estado con color
-            const badges = {
-                disponible: '<span class="badge success">Disponible</span>',
-                prestado: '<span class="badge" style="background:#0284c7;">Prestado</span>',
-                mantenimiento: '<span class="badge warning">Mantenimiento</span>',
-                baja: '<span class="badge danger">Baja</span>'
-            };
+            const totalReservas = demanda[equipo.id] || 0;
 
             const fila = document.createElement('tr');
             fila.innerHTML =
@@ -214,7 +253,58 @@
                 '<td style="text-transform:capitalize;">' + equipo.categoria + '</td>' +
                 '<td style="text-transform:capitalize;">' + equipo.gama + '</td>' +
                 '<td>' + (badges[equipo.estado] || equipo.estado) + '</td>' +
-                '<td>' + totalPrestamos + ' veces</td>';
+                '<td>' + totalReservas + ' veces</td>';
+
+            tbody.appendChild(fila);
+        }
+    }
+
+    function cargarDemandados(data) {
+        const tbody = document.getElementById('demandados-tabla');
+        const top = (data.mostDemanded || []).slice(0, 5);
+
+        if (top.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;">Todavia no hay reservas registradas.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        for (const equipo of top) {
+            const fila = document.createElement('tr');
+            fila.innerHTML =
+                '<td>' + equipo.id + '</td>' +
+                '<td>' + equipo.nombre + '</td>' +
+                '<td style="text-transform:capitalize;">' + (equipo.categoria || 'N/A') + '</td>' +
+                '<td>' + equipo.vecesReservado + ' veces</td>';
+
+            tbody.appendChild(fila);
+        }
+    }
+
+    function cargarFueraServicio(data) {
+        const tbody = document.getElementById('fuera-servicio-tabla');
+        const equipos = data.equiposFueraServicio || [];
+
+        if (equipos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;">No hay equipos fuera de servicio.</td></tr>';
+            return;
+        }
+
+        const badges = {
+            mantenimiento: '<span class="badge warning">Mantenimiento</span>',
+            baja: '<span class="badge danger">Baja</span>'
+        };
+
+        tbody.innerHTML = '';
+
+        for (const equipo of equipos) {
+            const fila = document.createElement('tr');
+            fila.innerHTML =
+                '<td>' + equipo.codigoBarras + '</td>' +
+                '<td>' + equipo.nombre + '</td>' +
+                '<td style="text-transform:capitalize;">' + equipo.categoria + '</td>' +
+                '<td>' + (badges[equipo.estado] || equipo.estado) + '</td>';
 
             tbody.appendChild(fila);
         }
@@ -223,7 +313,6 @@
     /**
      * toggleReporteMora()
      * Muestra u oculta el reporte de reservas vencidas.
-     * Al mostrarlo, carga las reservas cuya fecha de devolución ya pasó.
      */
     async function toggleReporteMora() {
         const reporte = document.getElementById('reporte-mora');
@@ -235,28 +324,32 @@
             return;
         }
 
-        // Cargar reservas vencidas
-        const vencidas = await Reservas.obtenerReservasVencidas();
+        const data = await Director.obtenerDashboard();
+        const vencidas = data.mora || [];
 
         if (vencidas.length === 0) {
             contenido.innerHTML = '<p>No hay reservas vencidas en este momento.</p>';
         } else {
             let html = '<div class="tabla-wrapper"><table class="data-table"><thead><tr>' +
-                '<th>Reserva</th><th>Alumno</th><th>Equipos</th><th>Vencimiento</th><th>Estado</th>' +
+                '<th>Reserva</th><th>Alumno</th><th>Equipos</th><th>Vencimiento</th><th>Dias Vencido</th><th>Estado</th>' +
                 '</tr></thead><tbody>';
 
             for (const reserva of vencidas) {
                 const usuario = await Datos.buscarUsuarioPorId(reserva.userId);
-                const equipos = await Reservas.resolverEquiposReserva(reserva);
-                const nombres = equipos.map(e => e.nombre).join(', ');
+                const nombres = (reserva.items || []).join(', ');
 
-                const estadoTexto = reserva.estado === 'reservado' ? 'Nunca retirado' : 'Entregado - No devuelto';
+                const estadoTexto = {
+                    reservado: 'Nunca retirado',
+                    entregado: 'Entregado - No devuelto',
+                    devuelto_faltantes: 'Devuelto con faltantes'
+                }[reserva.estado] || reserva.estado;
 
                 html += '<tr>' +
                     '<td>' + reserva.id.toUpperCase() + '</td>' +
                     '<td>' + (usuario ? usuario.nombre : 'N/A') + '</td>' +
                     '<td>' + nombres + '</td>' +
                     '<td>' + reserva.fechaDevolucion + '</td>' +
+                    '<td>' + reserva.diasVencido + '</td>' +
                     '<td><span class="badge danger">' + estadoTexto + '</span></td>' +
                     '</tr>';
             }

@@ -68,6 +68,7 @@
         </div>
     </main>
 
+    <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/reservas.js"></script>
@@ -89,12 +90,11 @@
      *   5. Muestra el remito con todos los datos
      */
 
-    // Verificar sesión
-    if (!Auth.verificarSesion()) {
-        // Redirige al login si no hay sesión
-    } else {
-        mostrarConfirmacion();
-    }
+    (async function() {
+        await Auth.init();
+        if (!Auth.verificarSesion()) return;
+        await mostrarConfirmacion();
+    })();
 
     async function mostrarConfirmacion() {
         const contenedor = document.getElementById('confirmacion-contenido');

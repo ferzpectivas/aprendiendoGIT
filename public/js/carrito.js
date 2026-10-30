@@ -11,7 +11,7 @@
  *   - Máximo 5 equipos por reserva
  *   - No se puede agregar el mismo equipo dos veces
  *   - Los equipos en estado "mantenimiento" o "baja" no se pueden reservar
- *   - Si el alumno es de 1° o 2° año, no puede reservar equipos "premium"
+ *   - El alumno debe cumplir el anio minimo requerido por el equipo
  *
  * ESTRUCTURA DEL CARRITO EN localStorage:
  *   Clave: "cinestock_carrito"
@@ -82,10 +82,11 @@ const Carrito = {
       return { exito: false, mensaje: 'Este equipo ya está prestado actualmente.' };
     }
 
-    // Regla 4: Los alumnos de 1° y 2° año no pueden reservar equipos premium
+    // Regla 4: El alumno debe cumplir el anio minimo del equipo
     const usuario = Auth.getUsuarioActual();
-    if (usuario && usuario.rol === 'alumno' && usuario.anio <= 2 && equipo.gama === 'premium') {
-      return { exito: false, mensaje: 'Como alumno de ' + usuario.anio + '° año, no podés reservar equipos premium.' };
+    const anioMinimo = Number(equipo.anioMinimo) || 0;
+    if (usuario && usuario.rol === 'alumno' && usuario.anio < anioMinimo) {
+      return { exito: false, mensaje: 'Como alumno de ' + usuario.anio + '° año, no podés reservar equipos que requieran ' + anioMinimo + '° año o superior.' };
     }
 
     // Si pasó todas las validaciones, agregar al carrito
