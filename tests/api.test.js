@@ -216,6 +216,7 @@ describe('CineStock API', () => {
       expect(response.body.generatedAt).toBeDefined();
       expect(response.body.totalReservas).toBeGreaterThan(0);
       expect(Array.isArray(response.body.mostDemanded)).toBe(true);
+      expect(Array.isArray(response.body.mora)).toBe(true);
     });
 
     test('solo el director puede acceder al dashboard', async () => {

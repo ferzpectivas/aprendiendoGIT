@@ -70,6 +70,7 @@ router.get('/reportes', (req, res) => {
     demandaPorEquipo: gearService.getDemandCounts(),
     porCategoria: dashboard.porCategoria,
     equiposFueraServicio: dashboard.equiposFueraServicio,
+    mora: dashboard.mora,
     totalReservas: checkouts.length,
     reservasActivas: checkouts.filter(checkout =>
       ['reservado', 'entregado'].includes(checkout.estado)

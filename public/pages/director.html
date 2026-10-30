@@ -39,9 +39,7 @@
             border-radius: 8px;
             padding: 1rem;
             margin-top: 1rem;
-            display: none;
         }
-        .reporte-mora.visible { display: block; }
         .reporte-mora h3 { color: #991b1b; margin-top: 0; }
         .reporte-descarga {
             display: flex;
@@ -93,8 +91,9 @@
                         <select id="reporte-select">
                             <option value="demandados">Equipos Mas Demandados</option>
                             <option value="fuera-servicio">Equipos Fuera de Servicio</option>
+                            <option value="mora">Reservas Vencidas</option>
                         </select>
-                        <button type="button" class="btn-action" id="btn-descargar-reporte">Descargar PDF</button>
+                        <button type="button" class="btn-action" id="btn-descargar-reporte">Descargar Reporte</button>
                     </div>
                 </div>
             </section>
@@ -139,12 +138,9 @@
                 </div>
             </section>
 
-            <!-- Reporte de mora (se muestra/oculta con el botón) -->
+            <!-- Reporte de mora (se muestra siempre) -->
             <section>
-                <div class="header-accion" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                    <h2>Reservas Vencidas</h2>
-                    <button type="button" class="btn-action" id="btn-reporte-mora">Generar Reporte de Mora</button>
-                </div>
+                <h2>Reservas Vencidas</h2>
                 <div id="reporte-mora" class="reporte-mora">
                     <h3>Reporte de Reservas Vencidas</h3>
                     <div id="mora-contenido"></div>
@@ -240,9 +236,6 @@
             });
         });
 
-        // Configurar botón de reporte de mora
-        document.getElementById('btn-reporte-mora').addEventListener('click', toggleReporteMora);
-
         // Configurar descarga de informes
         document.getElementById('btn-descargar-reporte').addEventListener('click', descargarReporte);
 
@@ -253,6 +246,7 @@
         await cargarInventario(data);
         cargarDemandados(data);
         cargarFueraServicio(data);
+        await cargarReporteMora(data);
     }
 
     function activarTab(nombre) {
@@ -424,6 +418,20 @@
                         equipo.vecesReservado
                     ];
                 });
+            } else if (tipo === 'mora') {
+                titulo = 'Reservas Vencidas';
+                encabezados = ['Reserva', 'Alumno', 'Equipos', 'Vencimiento', 'Dias Vencido', 'Estado'];
+                const filasMora = await obtenerFilasMora(data.mora || []);
+                filas = filasMora.map(function(fila) {
+                    return [
+                        fila.reserva,
+                        fila.alumno,
+                        fila.equipos,
+                        fila.vencimiento,
+                        fila.diasVencido,
+                        fila.estado
+                    ];
+                });
             } else {
                 titulo = 'Equipos Fuera de Servicio';
                 encabezados = ['ID', 'Codigo de Barras', 'Nombre del Equipo', 'Categoria', 'Estado'];
@@ -475,54 +483,67 @@
     }
 
     /**
-     * toggleReporteMora()
-     * Muestra u oculta el reporte de reservas vencidas.
+     * obtenerFilasMora(mora)
+     * Normaliza las reservas vencidas con el nombre del alumno y el
+     * texto del estado, para reutilizarlas en la tabla y en el PDF.
      */
-    async function toggleReporteMora() {
-        const reporte = document.getElementById('reporte-mora');
+    async function obtenerFilasMora(mora) {
+        const usuarios = await Datos.obtenerUsuarios();
+
+        return (mora || []).map(function(reserva) {
+            const usuario = usuarios.find(function(item) {
+                return item.id === reserva.userId;
+            });
+
+            const estadoTexto = {
+                reservado: 'Nunca retirado',
+                entregado: 'Entregado - No devuelto',
+                devuelto_faltantes: 'Devuelto con faltantes'
+            }[reserva.estado] || reserva.estado;
+
+            return {
+                reserva: reserva.id.toUpperCase(),
+                alumno: usuario ? usuario.nombre : 'N/A',
+                equipos: (reserva.items || []).join(', '),
+                vencimiento: reserva.fechaDevolucion,
+                diasVencido: reserva.diasVencido,
+                estado: estadoTexto
+            };
+        });
+    }
+
+    /**
+     * cargarReporteMora(data)
+     * Muestra directamente el reporte de reservas vencidas.
+     */
+    async function cargarReporteMora(data) {
         const contenido = document.getElementById('mora-contenido');
-
-        // Si ya está visible, ocultarlo
-        if (reporte.classList.contains('visible')) {
-            reporte.classList.remove('visible');
-            return;
-        }
-
-        const data = await Director.obtenerDashboard();
         const vencidas = data.mora || [];
 
         if (vencidas.length === 0) {
             contenido.innerHTML = '<p>No hay reservas vencidas en este momento.</p>';
-        } else {
-            let html = '<div class="tabla-wrapper"><table class="data-table"><thead><tr>' +
-                '<th>Reserva</th><th>Alumno</th><th>Equipos</th><th>Vencimiento</th><th>Dias Vencido</th><th>Estado</th>' +
-                '</tr></thead><tbody>';
-
-            for (const reserva of vencidas) {
-                const usuario = await Datos.buscarUsuarioPorId(reserva.userId);
-                const nombres = (reserva.items || []).join(', ');
-
-                const estadoTexto = {
-                    reservado: 'Nunca retirado',
-                    entregado: 'Entregado - No devuelto',
-                    devuelto_faltantes: 'Devuelto con faltantes'
-                }[reserva.estado] || reserva.estado;
-
-                html += '<tr>' +
-                    '<td>' + reserva.id.toUpperCase() + '</td>' +
-                    '<td>' + (usuario ? usuario.nombre : 'N/A') + '</td>' +
-                    '<td>' + nombres + '</td>' +
-                    '<td>' + reserva.fechaDevolucion + '</td>' +
-                    '<td>' + reserva.diasVencido + '</td>' +
-                    '<td><span class="badge danger">' + estadoTexto + '</span></td>' +
-                    '</tr>';
-            }
-
-            html += '</tbody></table></div>';
-            contenido.innerHTML = html;
+            return;
         }
 
-        reporte.classList.add('visible');
+        const filas = await obtenerFilasMora(vencidas);
+
+        let html = '<div class="tabla-wrapper"><table class="data-table"><thead><tr>' +
+            '<th>Reserva</th><th>Alumno</th><th>Equipos</th><th>Vencimiento</th><th>Dias Vencido</th><th>Estado</th>' +
+            '</tr></thead><tbody>';
+
+        for (const fila of filas) {
+            html += '<tr>' +
+                '<td>' + UI.escapar(fila.reserva) + '</td>' +
+                '<td>' + UI.escapar(fila.alumno) + '</td>' +
+                '<td>' + UI.escapar(fila.equipos) + '</td>' +
+                '<td>' + UI.escapar(fila.vencimiento) + '</td>' +
+                '<td>' + UI.escapar(fila.diasVencido) + '</td>' +
+                '<td><span class="badge danger">' + UI.escapar(fila.estado) + '</span></td>' +
+                '</tr>';
+        }
+
+        html += '</tbody></table></div>';
+        contenido.innerHTML = html;
     }
     </script>
 </body>
