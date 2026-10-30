@@ -9,11 +9,11 @@
     ],
     "fechaRetiro": "2026-09-10",
     "fechaDevolucion": "2026-09-12",
-    "estado": "reservado",
+    "estado": "devuelto_ok",
     "notas": "",
     "createdAt": "2026-09-01T10:00:00Z",
     "notificaciones": [],
-    "updatedAt": "2026-09-01T10:00:00Z"
+    "updatedAt": "2026-10-30T02:27:12.711Z"
   },
   {
     "id": "co-002",
@@ -69,11 +69,11 @@
     ],
     "fechaRetiro": "2026-09-15",
     "fechaDevolucion": "2026-09-17",
-    "estado": "entregado",
-    "notas": "",
+    "estado": "devuelto_faltantes",
+    "notas": "microfono",
     "createdAt": "2026-09-10T14:00:00Z",
     "notificaciones": [],
-    "updatedAt": "2026-10-30T00:18:55.252Z"
+    "updatedAt": "2026-10-30T02:24:32.028Z"
   },
   {
     "id": "co-006",
@@ -88,5 +88,22 @@
     "notificaciones": [],
     "createdAt": "2026-10-29T23:14:08.418Z",
     "updatedAt": "2026-10-30T00:01:47.720Z"
+  },
+  {
+    "id": "co-007",
+    "userId": "u-001",
+    "items": [
+      "g-001",
+      "g-006"
+    ],
+    "fechaRetiro": "2026-10-30",
+    "fechaDevolucion": "2026-11-03",
+    "estado": "reparacion",
+    "notas": "",
+    "notificaciones": [
+      "el loquito vino re empedo a llevarse los equipos"
+    ],
+    "createdAt": "2026-10-30T02:17:47.487Z",
+    "updatedAt": "2026-10-30T02:23:29.229Z"
   }
 ]

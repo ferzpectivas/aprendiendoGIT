@@ -201,7 +201,7 @@
     "nombre": "Monopie Benro Video",
     "categoria": "tripode",
     "gama": "standard",
-    "estado": "prestado",
+    "estado": "disponible",
     "anioMinimo": 1,
     "especificaciones": {
       "alturaMax": "160cm",
@@ -243,7 +243,7 @@
     "nombre": "Microfono Lavalier Sennheiser",
     "categoria": "audio",
     "gama": "standard",
-    "estado": "prestado",
+    "estado": "disponible",
     "anioMinimo": 1,
     "especificaciones": {
       "tipo": "Lavalier",

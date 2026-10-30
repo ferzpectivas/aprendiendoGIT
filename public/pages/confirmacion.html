@@ -71,7 +71,10 @@
     <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/impresion.js"></script>
     <script src="../js/reservas.js"></script>
+    <script src="../js/remito.js"></script>
 
     <script>
     /**
@@ -95,6 +98,8 @@
         if (!Auth.verificarSesion()) return;
         await mostrarConfirmacion();
     })();
+
+    let remitoActual = null;
 
     async function mostrarConfirmacion() {
         const contenedor = document.getElementById('confirmacion-contenido');
@@ -126,42 +131,24 @@
             return;
         }
 
-        // Obtener datos del usuario
-        const usuario = await Datos.buscarUsuarioPorId(reserva.userId);
-
-        // Resolver los IDs de equipos a objetos completos
-        const equiposReserva = await Reservas.resolverEquiposReserva(reserva);
-
-        // Armar el HTML del remito
-        const fechaCreacion = new Date(reserva.createdAt).toLocaleDateString('es-AR');
+        // Obtener datos del usuario y de los equipos
+        const datos = await Remito.obtenerDatos(reserva);
+        remitoActual = { reserva, usuario: datos.usuario, equipos: datos.equipos };
 
         contenedor.innerHTML =
-            '<section class="remito">' +
-                '<h2>REMITO DE RESERVA</h2>' +
-                '<div class="remito-detalle"><strong>N° de Reserva:</strong> ' + reserva.id.toUpperCase() + '</div>' +
-                '<div class="remito-detalle"><strong>Fecha de Solicitud:</strong> ' + fechaCreacion + '</div>' +
-                '<div class="remito-detalle"><strong>Alumno:</strong> ' + (usuario ? usuario.nombre : 'Desconocido') + '</div>' +
-                '<div class="remito-detalle"><strong>Matrícula:</strong> ' + (usuario ? usuario.matricula : 'N/A') + '</div>' +
-                '<div class="remito-detalle"><strong>Estado:</strong> Reservado</div>' +
-                '<br>' +
-                '<div class="remito-detalle"><strong>Fecha de Retiro:</strong> ' + reserva.fechaRetiro + '</div>' +
-                '<div class="remito-detalle"><strong>Fecha de Devolución:</strong> ' + reserva.fechaDevolucion + '</div>' +
-                '<br>' +
-                '<h3>Equipos Reservados (' + equiposReserva.length + '):</h3>' +
-                '<ul class="remito-items">' +
-                    equiposReserva.map(function(e) {
-                        return '<li>' + e.nombre + ' (' + e.codigoBarras + ')</li>';
-                    }).join('') +
-                '</ul>' +
-                '<div class="remito-footer">' +
-                    'Presentá este remito en el depósito al retirar tu equipamiento.<br>' +
-                    'Escuela de Artes Audiovisuales "Lumiere"' +
-                '</div>' +
-            '</section>' +
-            '<a href="alumno.html" class="btn-volver">Volver al Catálogo</a>';
+            Remito.construirHTML(reserva, datos.usuario, datos.equipos) +
+            '<div class="remito-acciones">' +
+                '<button type="button" class="btn-action" onclick="descargarRemito()">Descargar PDF</button>' +
+                '<a href="alumno.html" class="btn-volver" style="margin:0;">Volver al Catálogo</a>' +
+            '</div>';
 
         // Limpiar el ID de la reserva de localStorage (ya no se necesita)
         localStorage.removeItem('cinestock_ultima_reserva');
+    }
+
+    async function descargarRemito() {
+        if (!remitoActual) return;
+        await Remito.imprimir(remitoActual.reserva, remitoActual.usuario, remitoActual.equipos);
     }
     </script>
 </body>

@@ -43,6 +43,19 @@
         }
         .reporte-mora.visible { display: block; }
         .reporte-mora h3 { color: #991b1b; margin-top: 0; }
+        .reporte-descarga {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .reporte-descarga select {
+            padding: 0.55rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: white;
+        }
     </style>
 </head>
 <body>
@@ -87,6 +100,20 @@
                     <!-- Se llena dinámicamente con JavaScript -->
                 </tbody>
             </table>
+            </div>
+        </section>
+
+        <!-- Descarga de informes -->
+        <section>
+            <div class="header-accion" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <h2>Descargar Informes</h2>
+                <div class="reporte-descarga">
+                    <select id="reporte-select">
+                        <option value="demandados">Equipos Mas Demandados</option>
+                        <option value="fuera-servicio">Equipos Fuera de Servicio</option>
+                    </select>
+                    <button type="button" class="btn-action" id="btn-descargar-reporte">Descargar PDF</button>
+                </div>
             </div>
         </section>
 
@@ -142,6 +169,8 @@
     <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/impresion.js"></script>
     <script src="../js/director.js"></script>
 
     <script>
@@ -183,6 +212,9 @@
 
         // Configurar botón de reporte de mora
         document.getElementById('btn-reporte-mora').addEventListener('click', toggleReporteMora);
+
+        // Configurar descarga de informes
+        document.getElementById('btn-descargar-reporte').addEventListener('click', descargarReporte);
 
         // Cargar datos del dashboard
         const data = await Director.obtenerDashboard();
@@ -308,6 +340,82 @@
 
             tbody.appendChild(fila);
         }
+    }
+
+    /**
+     * descargarReporte()
+     * Genera un PDF imprimible con el informe seleccionado.
+     */
+    async function descargarReporte() {
+        const tipo = document.getElementById('reporte-select').value;
+
+        try {
+            const data = await Director.obtenerReporte();
+            const fecha = new Date().toLocaleString('es-AR');
+
+            let titulo;
+            let encabezados;
+            let filas;
+
+            if (tipo === 'demandados') {
+                titulo = 'Equipos Mas Demandados';
+                encabezados = ['ID', 'Nombre del Equipo', 'Categoria', 'Veces Reservado'];
+                filas = (data.mostDemanded || []).map(function(equipo) {
+                    return [
+                        equipo.id,
+                        equipo.nombre,
+                        equipo.categoria || 'N/A',
+                        equipo.vecesReservado
+                    ];
+                });
+            } else {
+                titulo = 'Equipos Fuera de Servicio';
+                encabezados = ['ID', 'Codigo de Barras', 'Nombre del Equipo', 'Categoria', 'Estado'];
+                filas = (data.equiposFueraServicio || []).map(function(equipo) {
+                    return [
+                        equipo.id,
+                        equipo.codigoBarras,
+                        equipo.nombre,
+                        equipo.categoria,
+                        equipo.estado
+                    ];
+                });
+            }
+
+            const html = construirInformeHTML(titulo, fecha, encabezados, filas);
+            Impresion.imprimirDocumento(titulo, html);
+        } catch (error) {
+            alert('No se pudo generar el informe: ' + error.message);
+        }
+    }
+
+    function construirInformeHTML(titulo, fecha, encabezados, filas) {
+        let html =
+            '<h1 class="documento-titulo">' + UI.escapar(titulo) + '</h1>' +
+            '<p class="documento-meta">Generado el ' + UI.escapar(fecha) + ' | CineStock</p>' +
+            '<p class="documento-resumen">Total de registros: ' + filas.length + '</p>' +
+            '<table class="documento-tabla"><thead><tr>';
+
+        html += encabezados.map(function(encabezado) {
+            return '<th>' + UI.escapar(encabezado) + '</th>';
+        }).join('');
+
+        html += '</tr></thead><tbody>';
+
+        if (filas.length === 0) {
+            html += '<tr><td colspan="' + encabezados.length + '" style="text-align:center;">Sin datos para mostrar.</td></tr>';
+        } else {
+            filas.forEach(function(fila) {
+                html += '<tr>' + fila.map(function(valor) {
+                    return '<td>' + UI.escapar(valor) + '</td>';
+                }).join('') + '</tr>';
+            });
+        }
+
+        html += '</tbody></table>' +
+            '<div class="documento-pie">Escuela de Artes Audiovisuales "Lumiere"</div>';
+
+        return html;
     }
 
     /**

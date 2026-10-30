@@ -417,3 +417,274 @@ button:disabled {
         grid-template-columns: repeat(4, 1fr);
     }
 }
+
+/* --- 10. Usuario en el header --- */
+.header-usuario {
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    font-weight: bold;
+    align-self: center;
+}
+
+/* --- 11. Modales compartidos --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modal-overlay.visible {
+    display: flex;
+}
+
+.modal {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.modal h3 {
+    margin: 0 0 0.75rem;
+    color: #1e293b;
+}
+
+.modal-cuerpo {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.modal-cuerpo p {
+    margin-bottom: 0.75rem;
+}
+
+.modal-detalle {
+    background: #f1f5f9;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.modal-detalle p {
+    margin-bottom: 0.5rem;
+}
+
+.modal-lista {
+    margin: 0.4rem 0 0.6rem 1.2rem;
+}
+
+.modal-lista li {
+    margin-bottom: 0.25rem;
+}
+
+.modal-botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.btn-secundario {
+    background-color: #6b7280;
+}
+
+.texto-secundario {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+/* --- 12. Pestañas --- */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    background: transparent;
+    color: #475569;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    padding: 0.6rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tab-btn:hover {
+    color: #0284c7;
+    background: #f1f5f9;
+}
+
+.tab-btn.active {
+    color: #0284c7;
+    border-bottom-color: #0284c7;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* --- 13. Tooltip flotante de observaciones --- */
+.tooltip-observacion {
+    display: inline-block;
+    color: #0284c7;
+    border-bottom: 1px dashed #0284c7;
+    cursor: help;
+    font-size: 0.85rem;
+}
+
+.tooltip-observacion:focus {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+}
+
+.tooltip-flotante {
+    position: fixed;
+    z-index: 1100;
+    max-width: 300px;
+    background: #1e293b;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    transition: opacity 0.12s ease;
+}
+
+.tooltip-flotante.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- 14. Remito compartido --- */
+.remito {
+    background: white;
+    border: 2px solid #1e293b;
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.remito h2 {
+    text-align: center;
+    border-bottom: 2px solid #1e293b;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.remito-detalle {
+    margin-bottom: 0.5rem;
+}
+
+.remito-detalle strong {
+    display: inline-block;
+    width: 180px;
+}
+
+.remito-items {
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+}
+
+.remito-items li {
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.remito-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid #1e293b;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.modal .remito {
+    margin: 0;
+    max-width: none;
+    padding: 1rem;
+    border-width: 1px;
+}
+
+.remito-acciones {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1.5rem auto 0;
+}
+
+/* --- 15. Responsive de nuevos componentes --- */
+@media (max-width: 768px) {
+    .modal {
+        padding: 1.25rem;
+    }
+
+    .tabs {
+        gap: 0.25rem;
+    }
+
+    .tab-btn {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 1rem;
+    }
+
+    .modal-botones {
+        flex-direction: column;
+    }
+
+    .modal-botones button {
+        width: 100%;
+    }
+
+    .remito {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+
+    .remito-detalle strong {
+        width: 140px;
+        font-size: 0.85rem;
+    }
+
+    .remito-acciones {
+        flex-direction: column;
+    }
+
+    .remito-acciones button,
+    .remito-acciones a {
+        width: 100%;
+        text-align: center;
+    }
+}

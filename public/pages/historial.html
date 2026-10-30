@@ -56,6 +56,21 @@
             background: #9ca3af;
             cursor: not-allowed;
         }
+        .reserva-acciones {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .btn-remito {
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 14px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
         .seccion-titulo {
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
@@ -68,6 +83,7 @@
         <h1>CineStock - Mi Historial</h1>
         <nav>
             <ul>
+                <li class="header-usuario" id="header-usuario"></li>
                 <li><a href="#" id="btn-logout">Cerrar Sesion</a></li>
                 <li><a href="alumno.html">Catalogo</a></li>
                 <li><a href="historial.html" class="active">Mi Historial</a></li>
@@ -85,7 +101,10 @@
     <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/impresion.js"></script>
     <script src="../js/reservas.js"></script>
+    <script src="../js/remito.js"></script>
 
     <script>
     /**
@@ -114,6 +133,13 @@
     })();
 
     async function inicializarHistorial() {
+        // Mostrar el nombre del usuario en el header
+        const usuarioActual = Auth.getUsuarioActual();
+        const headerUsuario = document.getElementById('header-usuario');
+        if (usuarioActual && headerUsuario) {
+            headerUsuario.textContent = 'Hola, ' + usuarioActual.nombre;
+        }
+
         // Logout
         document.getElementById('btn-logout').addEventListener('click', async function(e) {
             e.preventDefault();
@@ -200,6 +226,11 @@
                 '</button>';
         }
 
+        const acciones = '<div class="reserva-acciones">' +
+            '<button class="btn-remito" onclick="verRemito(\'' + reserva.id + '\')">Ver remito</button>' +
+            botonCancelar +
+        '</div>';
+
         const fechaCreacion = new Date(reserva.createdAt).toLocaleDateString('es-AR');
         const notificaciones = (reserva.notificaciones || []).map(function(mensaje) {
             return '<li>' + mensaje + '</li>';
@@ -208,7 +239,7 @@
         return '<div class="reserva-card">' +
             '<div class="reserva-header">' +
                 '<h3>' + reserva.id.toUpperCase() + ' ' + (badges[reserva.estado] || '') + '</h3>' +
-                botonCancelar +
+                acciones +
             '</div>' +
             '<div class="reserva-detalle"><strong>Creada:</strong> ' + fechaCreacion + '</div>' +
             '<div class="reserva-detalle"><strong>Retiro:</strong> ' + reserva.fechaRetiro + '</div>' +
@@ -219,8 +250,44 @@
         '</div>';
     }
 
+    async function verRemito(reservaId) {
+        const reservas = await Reservas.obtenerTodasLasReservas();
+        const reserva = reservas.find(function(item) {
+            return item.id === reservaId;
+        });
+
+        if (!reserva) {
+            alert('Reserva no encontrada.');
+            return;
+        }
+
+        await Remito.ver(reserva);
+    }
+
     async function cancelarReserva(reservaId) {
-        if (!confirm('¿Seguro que querés cancelar esta reserva?')) return;
+        const reservas = await Reservas.obtenerTodasLasReservas();
+        const reserva = reservas.find(function(item) {
+            return item.id === reservaId;
+        });
+        const equipos = reserva ? await Reservas.resolverEquiposReserva(reserva) : [];
+        const detalle = equipos.length
+            ? '<p><strong>Equipos:</strong></p><ul class="modal-lista">' +
+                equipos.map(function(equipo) {
+                    return '<li>' + UI.escapar(equipo.nombre) + '</li>';
+                }).join('') +
+              '</ul>'
+            : '';
+
+        const confirmado = await UI.confirmar({
+            titulo: 'Cancelar reserva',
+            mensaje: '¿Seguro que querés cancelar esta reserva?',
+            detalleHTML: detalle,
+            textoConfirmar: 'Si, cancelar',
+            textoCancelar: 'No, mantener',
+            claseConfirmar: 'btn-danger'
+        });
+
+        if (!confirmado) return;
 
         const resultado = await Reservas.cancelarReserva(reservaId);
         if (resultado.exito) {

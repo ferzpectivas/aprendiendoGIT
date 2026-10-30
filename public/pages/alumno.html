@@ -108,6 +108,7 @@
         <h1>CineStock - Modulo Alumno</h1>
         <nav>
             <ul>
+                <li class="header-usuario" id="header-usuario"></li>
                 <li><a href="#" id="btn-logout">Cerrar Sesion</a></li>
                 <li><a href="alumno.html" class="active">Catalogo</a></li>
                 <li><a href="historial.html">Mi Historial</a></li>
@@ -189,6 +190,7 @@
     <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
     <script src="../js/carrito.js"></script>
     <script src="../js/reservas.js"></script>
 
@@ -217,6 +219,13 @@
     })();
 
     async function inicializar() {
+        // Mostrar el nombre del usuario en el header
+        const usuarioActual = Auth.getUsuarioActual();
+        const headerUsuario = document.getElementById('header-usuario');
+        if (usuarioActual && headerUsuario) {
+            headerUsuario.textContent = 'Hola, ' + usuarioActual.nombre;
+        }
+
         // Configurar botón de cerrar sesión
         document.getElementById('btn-logout').addEventListener('click', async function(e) {
             e.preventDefault();
@@ -409,6 +418,47 @@
         if (carrito.length === 0) {
             mensajeEl.textContent = 'Agrega al menos un equipo al carrito.';
             mensajeEl.classList.add('visible');
+            return;
+        }
+
+        // Validaciones basicas antes de mostrar la confirmacion
+        if (!fechaRetiro || !fechaDevolucion) {
+            mensajeEl.textContent = 'Selecciona la fecha de retiro y la fecha de devolucion.';
+            mensajeEl.classList.add('visible');
+            return;
+        }
+
+        if (fechaDevolucion <= fechaRetiro) {
+            mensajeEl.textContent = 'La fecha de devolucion debe ser posterior a la fecha de retiro.';
+            mensajeEl.classList.add('visible');
+            return;
+        }
+
+        // Resolver los nombres de los equipos para mostrarlos en el popup
+        const equipos = await Carrito.obtenerDetallesCarrito();
+        const listaEquipos = equipos.map(function(equipo) {
+            return '<li>' +
+                UI.escapar(equipo.nombre) +
+                ' <span class="texto-secundario">(' + UI.escapar(equipo.codigoBarras) + ')</span>' +
+            '</li>';
+        }).join('');
+
+        const detalleHTML =
+            '<p><strong>Equipos seleccionados:</strong></p>' +
+            '<ul class="modal-lista">' + listaEquipos + '</ul>' +
+            '<p><strong>Fecha de retiro:</strong> ' + UI.escapar(fechaRetiro) + '<br>' +
+            '<strong>Fecha de devolucion:</strong> ' + UI.escapar(fechaDevolucion) + '</p>';
+
+        const confirmado = await UI.confirmar({
+            titulo: 'Confirmar reserva',
+            mensaje: '¿Estas seguro de realizar esta reserva?',
+            detalleHTML,
+            textoConfirmar: 'Si, reservar',
+            textoCancelar: 'Revisar',
+            claseConfirmar: 'btn-success'
+        });
+
+        if (!confirmado) {
             return;
         }
 

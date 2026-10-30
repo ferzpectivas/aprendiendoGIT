@@ -76,7 +76,14 @@
     </header>
 
     <main>
-        <section>
+        <!-- Pestañas: separan los informes del estado del inventario -->
+        <div class="tabs" role="tablist">
+            <button type="button" class="tab-btn active" data-tab="reservas" role="tab">Reservas</button>
+            <button type="button" class="tab-btn" data-tab="faltantes" role="tab">Faltantes</button>
+            <button type="button" class="tab-btn" data-tab="inventario" role="tab">Estado del Inventario</button>
+        </div>
+
+        <section id="tab-reservas" class="tab-panel active">
             <h2>Gestion de Reservas y Devoluciones</h2>
 
             <!-- Filtro por estado de reserva -->
@@ -116,7 +123,30 @@
             </div>
         </section>
 
-        <section>
+        <section id="tab-faltantes" class="tab-panel">
+            <h2>Devoluciones con Faltantes</h2>
+            <p class="texto-secundario" style="margin-bottom:0.5rem;">
+                Pasa el mouse o enfoca la observacion para ver el detalle del faltante.
+            </p>
+            <div class="tabla-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID Reserva</th>
+                        <th>Alumno</th>
+                        <th>Equipos</th>
+                        <th>Fecha Devolucion</th>
+                        <th>Observacion</th>
+                    </tr>
+                </thead>
+                <tbody id="faltantes-tabla">
+                    <!-- Se llena dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+            </div>
+        </section>
+
+        <section id="tab-inventario" class="tab-panel">
             <h2>Estado del Inventario</h2>
             <div class="tabla-wrapper">
             <table class="data-table">
@@ -166,6 +196,7 @@
     <script src="../js/api.js"></script>
     <script src="../js/datos.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
     <script src="../js/reservas.js"></script>
 
     <script>
@@ -197,6 +228,7 @@
     // Variables globales para guardar la reserva que se está procesando en los modales
     let reservaEnProceso = null;
     let reservaNotificacion = null;
+    let tooltipFlotante = null;
 
     async function inicializarPanolero() {
         // Configurar botón de cerrar sesión
@@ -206,16 +238,42 @@
             window.location.href = '/index.html';
         });
 
+        // Configurar pestañas
+        document.querySelectorAll('.tab-btn').forEach(function(boton) {
+            boton.addEventListener('click', function() {
+                activarTab(boton.dataset.tab);
+            });
+        });
+
         // Configurar filtro de estado
         document.getElementById('filtro-estado').addEventListener('change', cargarReservas);
 
-        // Cargar las reservas y el inventario
+        // Preparar tooltip flotante de observaciones
+        tooltipFlotante = document.createElement('div');
+        tooltipFlotante.className = 'tooltip-flotante';
+        document.body.appendChild(tooltipFlotante);
+        configurarTooltips();
+
+        // Cargar las reservas, los faltantes y el inventario
         await recargarPanel();
     }
 
+    function activarTab(nombre) {
+        document.querySelectorAll('.tab-btn').forEach(function(boton) {
+            boton.classList.toggle('active', boton.dataset.tab === nombre);
+        });
+
+        document.querySelectorAll('.tab-panel').forEach(function(panel) {
+            panel.classList.toggle('active', panel.id === 'tab-' + nombre);
+        });
+    }
+
     async function recargarPanel() {
-        await cargarReservas();
-        await cargarInventario();
+        await Promise.all([
+            cargarReservas(),
+            cargarFaltantes(),
+            cargarInventario()
+        ]);
     }
 
     /**
@@ -327,6 +385,155 @@
     }
 
     /**
+     * cargarFaltantes()
+     * Lista las reservas devueltas con faltantes y su observacion.
+     */
+    async function cargarFaltantes() {
+        const tbody = document.getElementById('faltantes-tabla');
+        const reservas = (await Reservas.obtenerTodasLasReservas())
+            .filter(function(reserva) {
+                return reserva.estado === 'devuelto_faltantes';
+            })
+            .sort(function(a, b) {
+                return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
+            });
+
+        if (reservas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#64748b;">No hay devoluciones con faltantes.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        for (const reserva of reservas) {
+            const usuario = await Datos.buscarUsuarioPorId(reserva.userId);
+            const equipos = await Reservas.resolverEquiposReserva(reserva);
+            const nombresEquipos = equipos.map(function(equipo) {
+                return equipo.nombre;
+            }).join(', ');
+
+            const fila = document.createElement('tr');
+            fila.innerHTML =
+                '<td><strong>' + UI.escapar(reserva.id.toUpperCase()) + '</strong></td>' +
+                '<td>' + UI.escapar(usuario ? usuario.nombre : 'Desconocido') +
+                    '<br><small>' + UI.escapar(usuario ? usuario.matricula : 'N/A') + '</small></td>' +
+                '<td>' + UI.escapar(nombresEquipos || 'Sin equipos') + '</td>' +
+                '<td>' + UI.escapar(reserva.fechaDevolucion) + '</td>' +
+                '<td class="celda-observacion"></td>';
+
+            const observacion = document.createElement('span');
+            const texto = reserva.notas && reserva.notas.trim()
+                ? reserva.notas.trim()
+                : 'Sin observacion';
+
+            observacion.className = 'tooltip-observacion';
+            observacion.textContent = 'Ver observacion';
+            observacion.tabIndex = 0;
+            observacion.setAttribute('data-tooltip', texto);
+            observacion.setAttribute('aria-label', 'Observacion: ' + texto);
+
+            fila.querySelector('.celda-observacion').appendChild(observacion);
+            tbody.appendChild(fila);
+        }
+    }
+
+    /**
+     * Configura el tooltip flotante para las observaciones.
+     */
+    function configurarTooltips() {
+        document.addEventListener('mouseover', function(evento) {
+            const elemento = evento.target && evento.target.closest
+                ? evento.target.closest('.tooltip-observacion')
+                : null;
+            if (elemento) mostrarTooltip(elemento);
+        });
+
+        document.addEventListener('mouseout', function(evento) {
+            const elemento = evento.target && evento.target.closest
+                ? evento.target.closest('.tooltip-observacion')
+                : null;
+            if (elemento) ocultarTooltip();
+        });
+
+        document.addEventListener('focusin', function(evento) {
+            const elemento = evento.target && evento.target.closest
+                ? evento.target.closest('.tooltip-observacion')
+                : null;
+            if (elemento) mostrarTooltip(elemento);
+        });
+
+        document.addEventListener('focusout', function(evento) {
+            const elemento = evento.target && evento.target.closest
+                ? evento.target.closest('.tooltip-observacion')
+                : null;
+            if (elemento) ocultarTooltip();
+        });
+
+        window.addEventListener('scroll', ocultarTooltip, true);
+    }
+
+    function mostrarTooltip(elemento) {
+        const texto = elemento.getAttribute('data-tooltip') || '';
+        if (!texto || !tooltipFlotante) return;
+
+        tooltipFlotante.textContent = texto;
+        tooltipFlotante.classList.add('visible');
+        tooltipFlotante.style.transform = 'translateY(-100%)';
+
+        const rect = elemento.getBoundingClientRect();
+        const margen = 10;
+
+        tooltipFlotante.style.left = rect.left + 'px';
+        tooltipFlotante.style.top = (rect.top - margen) + 'px';
+
+        window.requestAnimationFrame(function() {
+            const tooltipRect = tooltipFlotante.getBoundingClientRect();
+
+            if (tooltipRect.top < 8) {
+                tooltipFlotante.style.transform = 'translateY(0)';
+                tooltipFlotante.style.top = (rect.bottom + margen) + 'px';
+            }
+
+            if (tooltipRect.right > window.innerWidth - 8) {
+                tooltipFlotante.style.left = Math.max(8, window.innerWidth - tooltipRect.width - 8) + 'px';
+            }
+        });
+    }
+
+    function ocultarTooltip() {
+        if (tooltipFlotante) {
+            tooltipFlotante.classList.remove('visible');
+        }
+    }
+
+    async function obtenerReserva(reservaId) {
+        const reservas = await Reservas.obtenerTodasLasReservas();
+        return reservas.find(function(reserva) {
+            return reserva.id === reservaId;
+        }) || null;
+    }
+
+    async function construirDetalleReserva(reserva, accion) {
+        if (!reserva) {
+            return '<p>No se encontro la reserva.</p>';
+        }
+
+        const usuario = await Datos.buscarUsuarioPorId(reserva.userId);
+        const equipos = await Reservas.resolverEquiposReserva(reserva);
+        const listaEquipos = equipos.map(function(equipo) {
+            return '<li>' + UI.escapar(equipo.nombre) +
+                ' <span class="texto-secundario">(' + UI.escapar(equipo.codigoBarras) + ')</span></li>';
+        }).join('');
+
+        return '<p><strong>Reserva:</strong> ' + UI.escapar(reserva.id.toUpperCase()) + '</p>' +
+            '<p><strong>Alumno:</strong> ' + UI.escapar(usuario ? usuario.nombre : 'Desconocido') + '</p>' +
+            '<p><strong>Accion:</strong> ' + UI.escapar(accion) + '</p>' +
+            (listaEquipos
+                ? '<p><strong>Equipos:</strong></p><ul class="modal-lista">' + listaEquipos + '</ul>'
+                : '');
+    }
+
+    /**
      * entregarReserva(reservaId)
      * Cambia el estado de "reservado" a "entregado".
      * Se llama al hacer clic en el botón "Entregar".
@@ -334,6 +541,18 @@
      * @param {string} reservaId - ID de la reserva
      */
     async function entregarReserva(reservaId) {
+        const reserva = await obtenerReserva(reservaId);
+        const confirmado = await UI.confirmar({
+            titulo: 'Confirmar entrega',
+            mensaje: '¿Confirmas la entrega de esta reserva al alumno?',
+            detalleHTML: await construirDetalleReserva(reserva, 'Entregar equipos al alumno'),
+            textoConfirmar: 'Si, entregar',
+            textoCancelar: 'Cancelar',
+            claseConfirmar: 'btn-action'
+        });
+
+        if (!confirmado) return;
+
         const resultado = await Reservas.cambiarEstadoReserva(reservaId, 'entregado');
         if (resultado.exito) {
             await recargarPanel();
@@ -350,6 +569,18 @@
      * @param {string} reservaId - ID de la reserva
      */
     async function devolverOK(reservaId) {
+        const reserva = await obtenerReserva(reservaId);
+        const confirmado = await UI.confirmar({
+            titulo: 'Confirmar devolucion',
+            mensaje: '¿Confirmas que el alumno devolvio todos los equipos en orden?',
+            detalleHTML: await construirDetalleReserva(reserva, 'Registrar devolucion OK'),
+            textoConfirmar: 'Si, devolucion OK',
+            textoCancelar: 'Cancelar',
+            claseConfirmar: 'btn-success'
+        });
+
+        if (!confirmado) return;
+
         const resultado = await Reservas.cambiarEstadoReserva(reservaId, 'devuelto_ok');
         if (resultado.exito) {
             await recargarPanel();
@@ -359,6 +590,18 @@
     }
 
     async function enviarAReparacion(reservaId) {
+        const reserva = await obtenerReserva(reservaId);
+        const confirmado = await UI.confirmar({
+            titulo: 'Confirmar reparacion',
+            mensaje: '¿Confirmas que los equipos pasan a reparacion?',
+            detalleHTML: await construirDetalleReserva(reserva, 'Enviar equipos a reparacion'),
+            textoConfirmar: 'Si, enviar',
+            textoCancelar: 'Cancelar',
+            claseConfirmar: 'btn-reparacion'
+        });
+
+        if (!confirmado) return;
+
         const resultado = await Reservas.cambiarEstadoReserva(reservaId, 'reparacion');
         if (resultado.exito) {
             await recargarPanel();
@@ -395,11 +638,29 @@
     async function confirmarDevolucionFaltantes() {
         if (!reservaEnProceso) return;
 
+        const reservaId = reservaEnProceso;
         const notas = document.getElementById('modal-notas-texto').value.trim();
-        const resultado = await Reservas.cambiarEstadoReserva(reservaEnProceso, 'devuelto_faltantes', notas);
+        const reserva = await obtenerReserva(reservaId);
 
         cerrarModal();
 
+        const confirmado = await UI.confirmar({
+            titulo: 'Confirmar devolucion con faltantes',
+            mensaje: '¿Confirmas registrar la devolucion con faltantes?',
+            detalleHTML: (await construirDetalleReserva(reserva, 'Registrar devolucion con faltantes')) +
+                '<p><strong>Observacion:</strong> ' + UI.escapar(notas || 'Sin observacion') + '</p>',
+            textoConfirmar: 'Si, registrar',
+            textoCancelar: 'Volver',
+            claseConfirmar: 'btn-devolver-faltantes'
+        });
+
+        if (!confirmado) {
+            abrirModalFaltantes(reservaId);
+            document.getElementById('modal-notas-texto').value = notas;
+            return;
+        }
+
+        const resultado = await Reservas.cambiarEstadoReserva(reservaId, 'devuelto_faltantes', notas);
         if (resultado.exito) {
             await recargarPanel();
         } else {
@@ -427,9 +688,28 @@
             return;
         }
 
-        const resultado = await Reservas.enviarNotificacion(reservaNotificacion, mensaje);
+        const reservaId = reservaNotificacion;
+        const reserva = await obtenerReserva(reservaId);
+
         cerrarModalNotificacion();
 
+        const confirmado = await UI.confirmar({
+            titulo: 'Confirmar notificacion',
+            mensaje: '¿Confirmas el envio de esta notificacion al alumno?',
+            detalleHTML: (await construirDetalleReserva(reserva, 'Enviar notificacion')) +
+                '<p><strong>Mensaje:</strong> ' + UI.escapar(mensaje) + '</p>',
+            textoConfirmar: 'Si, enviar',
+            textoCancelar: 'Volver',
+            claseConfirmar: 'btn-notificar'
+        });
+
+        if (!confirmado) {
+            abrirModalNotificacion(reservaId);
+            document.getElementById('modal-notificacion-texto').value = mensaje;
+            return;
+        }
+
+        const resultado = await Reservas.enviarNotificacion(reservaId, mensaje);
         if (resultado.exito) {
             await recargarPanel();
         } else {
