@@ -23,7 +23,7 @@ Sistema de gestion de prestamos de equipamiento audiovisual para la Escuela de A
 | Confirmacion | `/pages/confirmacion.html` | Alumno | Remito digital de la reserva |
 | Historial | `/pages/historial.html` | Alumno | Reservas activas, finalizadas, cancelacion y notificaciones |
 | Panolero | `/pages/panolero.html` | Panolero | Reservas, entregas, devoluciones, reparaciones, notificaciones e inventario |
-| Director | `/pages/director.html` | Director | Estadisticas, inventario, equipos mas demandados, fuera de servicio y mora |
+| Director | `/pages/director.html` | Director | Estadisticas e informes, con el estado del inventario en una pestaña separada |
 
 ## Stack
 

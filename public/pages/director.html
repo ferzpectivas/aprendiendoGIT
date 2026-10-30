@@ -69,101 +69,121 @@
     </header>
 
     <main>
-        <!-- Estadísticas generales -->
-        <section>
-            <h2>Resumen del Sistema</h2>
-            <div class="stats-grid" id="stats-grid">
-                <!-- Se llena dinámicamente con JavaScript -->
-            </div>
-        </section>
+        <!-- Pestañas: separan el estado del inventario del resto de los informes -->
+        <div class="tabs" role="tablist">
+            <button type="button" class="tab-btn active" data-tab="informes" role="tab">Informes</button>
+            <button type="button" class="tab-btn" data-tab="inventario" role="tab">Estado del Inventario</button>
+        </div>
 
-        <!-- Inventario de equipos -->
-        <section>
-            <div class="header-accion" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                <h2>Inventario General</h2>
-                <button type="button" class="btn-action" id="btn-reporte-mora">Generar Reporte de Mora</button>
-            </div>
-            <br>
-            <div class="tabla-wrapper">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID Equipo</th>
-                        <th>Nombre del Equipo</th>
-                        <th>Categoria</th>
-                        <th>Gama</th>
-                        <th>Estado</th>
-                        <th>Veces Reservado</th>
-                    </tr>
-                </thead>
-                <tbody id="inventario-tabla">
+        <!-- Informes -->
+        <div id="tab-informes" class="tab-panel active">
+            <!-- Resumen de reservas -->
+            <section>
+                <h2>Resumen de Reservas</h2>
+                <div class="stats-grid" id="stats-informes">
                     <!-- Se llena dinámicamente con JavaScript -->
-                </tbody>
-            </table>
-            </div>
-        </section>
-
-        <!-- Descarga de informes -->
-        <section>
-            <div class="header-accion" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                <h2>Descargar Informes</h2>
-                <div class="reporte-descarga">
-                    <select id="reporte-select">
-                        <option value="demandados">Equipos Mas Demandados</option>
-                        <option value="fuera-servicio">Equipos Fuera de Servicio</option>
-                    </select>
-                    <button type="button" class="btn-action" id="btn-descargar-reporte">Descargar PDF</button>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Equipos mas demandados -->
-        <section>
-            <h2>Equipos Mas Demandados</h2>
-            <div class="tabla-wrapper">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID Equipo</th>
-                        <th>Nombre del Equipo</th>
-                        <th>Categoria</th>
-                        <th>Veces Reservado</th>
-                    </tr>
-                </thead>
-                <tbody id="demandados-tabla">
+            <!-- Descarga de informes -->
+            <section>
+                <div class="header-accion" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <h2>Descargar Informes</h2>
+                    <div class="reporte-descarga">
+                        <select id="reporte-select">
+                            <option value="demandados">Equipos Mas Demandados</option>
+                            <option value="fuera-servicio">Equipos Fuera de Servicio</option>
+                        </select>
+                        <button type="button" class="btn-action" id="btn-descargar-reporte">Descargar PDF</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Equipos mas demandados -->
+            <section>
+                <h2>Equipos Mas Demandados</h2>
+                <div class="tabla-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID Equipo</th>
+                            <th>Nombre del Equipo</th>
+                            <th>Categoria</th>
+                            <th>Veces Reservado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="demandados-tabla">
+                        <!-- Se llena dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- Equipos fuera de servicio -->
+            <section>
+                <h2>Equipos Fuera de Servicio</h2>
+                <div class="tabla-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID Equipo</th>
+                            <th>Nombre del Equipo</th>
+                            <th>Categoria</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fuera-servicio-tabla">
+                        <!-- Se llena dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- Reporte de mora (se muestra/oculta con el botón) -->
+            <section>
+                <div class="header-accion" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <h2>Reservas Vencidas</h2>
+                    <button type="button" class="btn-action" id="btn-reporte-mora">Generar Reporte de Mora</button>
+                </div>
+                <div id="reporte-mora" class="reporte-mora">
+                    <h3>Reporte de Reservas Vencidas</h3>
+                    <div id="mora-contenido"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Estado del inventario -->
+        <div id="tab-inventario" class="tab-panel">
+            <!-- Resumen del inventario -->
+            <section>
+                <h2>Resumen del Inventario</h2>
+                <div class="stats-grid" id="stats-inventario">
                     <!-- Se llena dinámicamente con JavaScript -->
-                </tbody>
-            </table>
-            </div>
-        </section>
+                </div>
+            </section>
 
-        <!-- Equipos fuera de servicio -->
-        <section>
-            <h2>Equipos Fuera de Servicio</h2>
-            <div class="tabla-wrapper">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>ID Equipo</th>
-                        <th>Nombre del Equipo</th>
-                        <th>Categoria</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="fuera-servicio-tabla">
-                    <!-- Se llena dinámicamente con JavaScript -->
-                </tbody>
-            </table>
-            </div>
-        </section>
-
-        <!-- Reporte de mora (se muestra/oculta con el botón) -->
-        <section>
-            <div id="reporte-mora" class="reporte-mora">
-                <h3>Reporte de Reservas Vencidas</h3>
-                <div id="mora-contenido"></div>
-            </div>
-        </section>
+            <!-- Inventario de equipos -->
+            <section>
+                <h2>Inventario General</h2>
+                <div class="tabla-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID Equipo</th>
+                            <th>Nombre del Equipo</th>
+                            <th>Categoria</th>
+                            <th>Gama</th>
+                            <th>Estado</th>
+                            <th>Veces Reservado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventario-tabla">
+                        <!-- Se llena dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+                </div>
+            </section>
+        </div>
     </main>
 
     <script src="../js/api.js"></script>
@@ -178,21 +198,24 @@
      * ================================================================
      * PÁGINA DEL DIRECTOR: DASHBOARD Y REPORTES
      * ================================================================
-     * El director tiene una visión general del sistema:
-     *   1. Estadísticas: cuántos equipos hay disponibles, prestados,
-     *      en mantenimiento, dados de baja y reservas vencidas
-     *   2. Inventario completo: todos los equipos con su estado y
-     *      cantidad de reservas históricas
-     *   3. Equipos más demandados y equipos fuera de servicio
-     *   4. Reporte de mora: lista de reservas cuya fecha de devolución
-     *      ya pasó y aún no fueron devueltas
+     * El director tiene una visión general del sistema dividida en dos
+     * pestañas para no mezclar el estado del inventario con los informes:
+     *   1. Estado del inventario: resumen de equipos disponibles, prestados,
+     *      en mantenimiento y dados de baja, más la tabla completa de equipos
+     *      con su estado y cantidad de reservas históricas
+     *   2. Informes: resumen de reservas, descarga de informes, equipos más
+     *      demandados, equipos fuera de servicio y reporte de mora
      *
-     * ESTADÍSTICAS CALCULADAS:
+     * ESTADÍSTICAS DE INVENTARIO:
      *   - Disponibles: equipos con estado "disponible"
      *   - Prestados: equipos con estado "prestado"
      *   - En mantenimiento: equipos con estado "mantenimiento"
+     *   - Dados de baja: equipos con estado "baja"
+     *
+     * ESTADÍSTICAS DE INFORMES:
+     *   - Equipos en uso: reservas vigentes con retiro y devolución activos
      *   - Reservas vencidas: reservas con fechaDevolucion < hoy y
-     *     estado reservado o entregado
+     *     estado entregado o devuelto_faltantes
      */
 
     (async function() {
@@ -210,6 +233,13 @@
             window.location.href = '/index.html';
         });
 
+        // Configurar pestañas
+        document.querySelectorAll('.tab-btn').forEach(function(boton) {
+            boton.addEventListener('click', function() {
+                activarTab(boton.dataset.tab);
+            });
+        });
+
         // Configurar botón de reporte de mora
         document.getElementById('btn-reporte-mora').addEventListener('click', toggleReporteMora);
 
@@ -218,19 +248,30 @@
 
         // Cargar datos del dashboard
         const data = await Director.obtenerDashboard();
-        cargarEstadisticas(data);
+        cargarEstadisticasInventario(data);
+        cargarEstadisticasInformes(data);
         await cargarInventario(data);
         cargarDemandados(data);
         cargarFueraServicio(data);
     }
 
+    function activarTab(nombre) {
+        document.querySelectorAll('.tab-btn').forEach(function(boton) {
+            boton.classList.toggle('active', boton.dataset.tab === nombre);
+        });
+
+        document.querySelectorAll('.tab-panel').forEach(function(panel) {
+            panel.classList.toggle('active', panel.id === 'tab-' + nombre);
+        });
+    }
+
     /**
-     * cargarEstadisticas(data)
-     * Muestra las estadísticas generales calculadas por el servidor.
+     * cargarEstadisticasInventario(data)
+     * Muestra el estado actual del inventario calculado por el servidor.
      */
-    function cargarEstadisticas(data) {
+    function cargarEstadisticasInventario(data) {
         const stats = data.stats;
-        const statsGrid = document.getElementById('stats-grid');
+        const statsGrid = document.getElementById('stats-inventario');
 
         statsGrid.innerHTML =
             '<div class="stat-card stat-disponible">' +
@@ -249,6 +290,21 @@
             '<div class="stat-card stat-baja">' +
                 '<p>Dados de Baja</p>' +
                 '<h3>' + stats.baja + '</h3>' +
+            '</div>';
+    }
+
+    /**
+     * cargarEstadisticasInformes(data)
+     * Muestra los indicadores de reservas que acompañan a los informes.
+     */
+    function cargarEstadisticasInformes(data) {
+        const stats = data.stats;
+        const statsGrid = document.getElementById('stats-informes');
+
+        statsGrid.innerHTML =
+            '<div class="stat-card stat-prestado">' +
+                '<p>Equipos en Uso</p>' +
+                '<h3>' + stats.enUso + '</h3>' +
             '</div>' +
             '<div class="stat-card stat-vencido">' +
                 '<p>Reservas Vencidas</p>' +
