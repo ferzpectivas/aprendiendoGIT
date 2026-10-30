@@ -187,7 +187,7 @@ describe('CineStock API', () => {
         .post('/api/checkouts')
         .send({
           items: ['g-010'],
-          fechaRetiro: dateOffset(1),
+          fechaRetiro: dateOffset(0),
           fechaDevolucion: dateOffset(3)
         });
 
@@ -227,58 +227,103 @@ describe('CineStock API', () => {
 
   describe('Panel del panolero', () => {
     test('entrega y devuelve una reserva actualizando el inventario', async () => {
+      const creada = await alumno
+        .post('/api/checkouts')
+        .send({
+          items: ['g-011'],
+          fechaRetiro: dateOffset(50),
+          fechaDevolucion: dateOffset(52)
+        });
+
+      expect(creada.status).toBe(201);
+
       const entrega = await panolero
-        .put('/api/admin/checkouts/co-001/status')
+        .put('/api/admin/checkouts/' + creada.body.id + '/status')
         .send({ estado: 'entregado' });
 
       expect(entrega.status).toBe(200);
       expect(entrega.body.estado).toBe('entregado');
 
-      const prestado = await alumno.get('/api/gear/g-001');
+      const prestado = await alumno.get('/api/gear/g-011');
       expect(prestado.body.estado).toBe('prestado');
 
       const devolucion = await panolero
-        .put('/api/admin/checkouts/co-001/status')
+        .put('/api/admin/checkouts/' + creada.body.id + '/status')
         .send({ estado: 'devuelto_ok' });
 
       expect(devolucion.status).toBe(200);
       expect(devolucion.body.estado).toBe('devuelto_ok');
 
-      const disponible = await alumno.get('/api/gear/g-001');
+      const disponible = await alumno.get('/api/gear/g-011');
       expect(disponible.body.estado).toBe('disponible');
     });
 
     test('envia notificaciones al alumno', async () => {
       const mensaje = 'Falta devolver el cable HDMI.';
+      const creada = await alumno
+        .post('/api/checkouts')
+        .send({
+          items: ['g-017'],
+          fechaRetiro: dateOffset(55),
+          fechaDevolucion: dateOffset(57)
+        });
+
+      expect(creada.status).toBe(201);
 
       const notificacion = await panolero
-        .post('/api/admin/checkouts/co-001/notify')
+        .post('/api/admin/checkouts/' + creada.body.id + '/notify')
         .send({ mensaje });
 
       expect(notificacion.status).toBe(200);
 
       const reservas = await alumno.get('/api/checkouts');
-      const reserva = reservas.body.find(item => item.id === 'co-001');
+      const reserva = reservas.body.find(item => item.id === creada.body.id);
       expect(reserva.notificaciones).toContain(mensaje);
     });
 
     test('rechaza notificaciones vacias', async () => {
+      const creada = await alumno
+        .post('/api/checkouts')
+        .send({
+          items: ['g-019'],
+          fechaRetiro: dateOffset(60),
+          fechaDevolucion: dateOffset(62)
+        });
+
+      expect(creada.status).toBe(201);
+
       const response = await panolero
-        .post('/api/admin/checkouts/co-001/notify')
+        .post('/api/admin/checkouts/' + creada.body.id + '/notify')
         .send({ mensaje: '   ' });
 
       expect(response.status).toBe(400);
     });
 
     test('envia un equipo a reparacion', async () => {
+      const creada = await alumno
+        .post('/api/checkouts')
+        .send({
+          items: ['g-012'],
+          fechaRetiro: dateOffset(70),
+          fechaDevolucion: dateOffset(72)
+        });
+
+      expect(creada.status).toBe(201);
+
+      const entrega = await panolero
+        .put('/api/admin/checkouts/' + creada.body.id + '/status')
+        .send({ estado: 'entregado' });
+
+      expect(entrega.status).toBe(200);
+
       const response = await panolero
-        .put('/api/admin/checkouts/co-002/status')
+        .put('/api/admin/checkouts/' + creada.body.id + '/status')
         .send({ estado: 'reparacion', notas: 'Lente con hongo.' });
 
       expect(response.status).toBe(200);
       expect(response.body.estado).toBe('reparacion');
 
-      const equipo = await alumno.get('/api/gear/g-002');
+      const equipo = await alumno.get('/api/gear/g-012');
       expect(equipo.body.estado).toBe('mantenimiento');
     });
   });
