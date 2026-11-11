@@ -22,12 +22,12 @@ app.use(session({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: false,
+    secure: process.env.NODE_ENV === 'production',
     maxAge: 8 * 60 * 60 * 1000
   }
 }));
 
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

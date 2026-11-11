@@ -105,5 +105,19 @@
     ],
     "createdAt": "2026-10-30T02:17:47.487Z",
     "updatedAt": "2026-10-30T02:23:29.229Z"
+  },
+  {
+    "id": "co-008",
+    "userId": "u-001",
+    "items": [
+      "g-001"
+    ],
+    "fechaRetiro": "2026-11-12",
+    "fechaDevolucion": "2026-11-14",
+    "estado": "devuelto_faltantes",
+    "notas": "devuelto sin manuel instrucciones",
+    "notificaciones": [],
+    "createdAt": "2026-11-11T20:28:25.895Z",
+    "updatedAt": "2026-11-11T20:29:42.350Z"
   }
 ]

@@ -1,18 +1,19 @@
 {
-  "name": "cinestock",
+  "name": "cinestock-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "Sistema de prestamo audiovisual - Escuela Lumiere",
-  "main": "server.js",
+  "description": "API de prestamo audiovisual - Escuela Lumiere",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
+    "start": "node index.js",
+    "dev": "node --watch index.js",
     "test": "jest --passWithNoTests"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
+    "dotenv": "^16.6.1",
     "express": "^4.18.2",
     "express-session": "^1.17.3"
   },
