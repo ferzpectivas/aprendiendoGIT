@@ -13,6 +13,11 @@ const app = express();
 
 app.disable('x-powered-by');
 
+// Render (y otros PaaS) terminan TLS en un proxy. Sin esto, req.secure es false
+// y express-session no envia la cookie de sesion marcada como secure, por lo que
+// el login responde 200 pero la sesion no persiste y el usuario vuelve al login.
+app.set('trust proxy', 1);
+
 app.use(express.json());
 
 app.use(session({
