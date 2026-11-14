@@ -143,6 +143,32 @@ main {
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
+.card-equipo-foto {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+}
+
+.cart-item-thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.cart-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
 /* --- 6. Tablas de datos --- */
 .tabla-wrapper {
     overflow-x: auto;

@@ -49,6 +49,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 0.6rem;
             background: #f1f5f9;
             padding: 0.5rem 0.75rem;
             border-radius: 6px;
@@ -330,6 +331,7 @@
             }
 
             tarjeta.innerHTML =
+                UI.htmlFotoEquipo(equipo, 'card-equipo-foto') +
                 '<h4>' + equipo.nombre + '</h4>' +
                 '<p><span class="badge-gama ' + gamaClass + '">' + equipo.gama + '</span> ' +
                 '<span class="estado-badge ' + estadoClass + '">' + (estadoText[equipo.estado] || equipo.estado) + '</span></p>' +
@@ -387,7 +389,8 @@
             const div = document.createElement('div');
             div.className = 'cart-item';
             div.innerHTML =
-                '<div>' +
+                UI.htmlFotoEquipo(equipo, 'cart-item-thumb') +
+                '<div class="cart-item-info">' +
                     '<span class="cart-item-nombre">' + equipo.nombre + '</span><br>' +
                     '<span class="cart-item-codigo">' + equipo.codigoBarras + '</span>' +
                 '</div>' +

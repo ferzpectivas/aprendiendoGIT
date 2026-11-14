@@ -11,12 +11,12 @@
       "sensor": "APS-C",
       "megapixeles": 24.2
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-001.webp"
   },
   {
     "id": "g-002",
     "codigoBarras": "CAM-002",
-    "nombre": "Camara Sony Alpha A7 III",
+    "nombre": "Camara Sony Alpha a7 III",
     "categoria": "camara",
     "gama": "premium",
     "estado": "disponible",
@@ -25,12 +25,12 @@
       "sensor": "Full Frame",
       "megapixeles": 24.2
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-002.webp"
   },
   {
     "id": "g-003",
     "codigoBarras": "CAM-003",
-    "nombre": "Blackmagic Pocket 4K",
+    "nombre": "Blackmagic Pocket Cinema Camera 4K",
     "categoria": "camara",
     "gama": "premium",
     "estado": "mantenimiento",
@@ -39,12 +39,12 @@
       "sensor": "Micro 4/3",
       "resolucion": "4K"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-003.webp"
   },
   {
     "id": "g-004",
     "codigoBarras": "CAM-004",
-    "nombre": "Panasonic Lumix GH5",
+    "nombre": "Panasonic Lumix DC-GH5",
     "categoria": "camara",
     "gama": "standard",
     "estado": "disponible",
@@ -53,12 +53,12 @@
       "sensor": "Micro 4/3",
       "resolucion": "4K"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-004.webp"
   },
   {
     "id": "g-005",
     "codigoBarras": "CAM-005",
-    "nombre": "Camara Sony A6400",
+    "nombre": "Camara Sony Alpha a6400",
     "categoria": "camara",
     "gama": "standard",
     "estado": "disponible",
@@ -67,12 +67,12 @@
       "sensor": "APS-C",
       "megapixeles": 24.2
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-005.webp"
   },
   {
     "id": "g-006",
     "codigoBarras": "LEN-001",
-    "nombre": "Lente Canon 50mm f/1.8",
+    "nombre": "Lente Canon EF 50mm f/1.8 STM",
     "categoria": "lente",
     "gama": "standard",
     "estado": "disponible",
@@ -81,12 +81,12 @@
       "montura": "Canon EF",
       "distanciaFocal": "50mm"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-006.webp"
   },
   {
     "id": "g-007",
     "codigoBarras": "LEN-002",
-    "nombre": "Lente Sigma 18-35mm f/1.8",
+    "nombre": "Lente Sigma 18-35mm f/1.8 DC HSM Art",
     "categoria": "lente",
     "gama": "standard",
     "estado": "disponible",
@@ -95,12 +95,12 @@
       "montura": "Canon EF",
       "distanciaFocal": "18-35mm"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-007.webp"
   },
   {
     "id": "g-008",
     "codigoBarras": "LEN-003",
-    "nombre": "Lente Sony 24-70mm f/2.8",
+    "nombre": "Lente Sony FE 24-70mm f/2.8 GM",
     "categoria": "lente",
     "gama": "premium",
     "estado": "prestado",
@@ -109,35 +109,35 @@
       "montura": "Sony E",
       "distanciaFocal": "24-70mm"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-008.webp"
   },
   {
     "id": "g-009",
     "codigoBarras": "LEN-004",
-    "nombre": "Lente Canon 85mm f/1.4",
+    "nombre": "Lente Canon EF 85mm f/1.4L IS USM",
     "categoria": "lente",
     "gama": "premium",
     "estado": "disponible",
     "anioMinimo": 3,
     "especificaciones": {
-      "montura": "Canon RF",
+      "montura": "Canon EF",
       "distanciaFocal": "85mm"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-009.webp"
   },
   {
     "id": "g-010",
     "codigoBarras": "ILU-001",
-    "nombre": "Kit Luces LED Ledgo",
+    "nombre": "Kit 2x Aputure Amaran 200d",
     "categoria": "iluminacion",
     "gama": "standard",
     "estado": "disponible",
     "anioMinimo": 1,
     "especificaciones": {
-      "potencia": "100W c/u",
-      "tipo": "LED"
+      "potencia": "200W c/u",
+      "tipo": "LED daylight"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-010.webp"
   },
   {
     "id": "g-011",
@@ -151,12 +151,12 @@
       "potencia": "100W",
       "tipo": "LED daylight"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-011.webp"
   },
   {
     "id": "g-012",
     "codigoBarras": "ILU-003",
-    "nombre": "Panel LED Godox 500",
+    "nombre": "Panel LED Godox LED500LR",
     "categoria": "iluminacion",
     "gama": "standard",
     "estado": "disponible",
@@ -165,12 +165,12 @@
       "potencia": "50W",
       "tipo": "LED panel"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-012.webp"
   },
   {
     "id": "g-013",
     "codigoBarras": "ILU-004",
-    "nombre": "Fresnel Halogeno 650W",
+    "nombre": "Fresnel Arri 650 Plus",
     "categoria": "iluminacion",
     "gama": "standard",
     "estado": "mantenimiento",
@@ -179,12 +179,12 @@
       "potencia": "650W",
       "tipo": "Halogeno"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-013.webp"
   },
   {
     "id": "g-014",
     "codigoBarras": "TRI-001",
-    "nombre": "Tripode Manfrotto 504HD",
+    "nombre": "Tripode Manfrotto 504HD + 546B",
     "categoria": "tripode",
     "gama": "premium",
     "estado": "disponible",
@@ -193,26 +193,26 @@
       "alturaMax": "170cm",
       "peso": "4.2kg"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-014.webp"
   },
   {
     "id": "g-015",
     "codigoBarras": "TRI-002",
-    "nombre": "Monopie Benro Video",
+    "nombre": "Monopie Benro A29T",
     "categoria": "tripode",
     "gama": "standard",
     "estado": "disponible",
     "anioMinimo": 1,
     "especificaciones": {
       "alturaMax": "160cm",
-      "peso": "1.2kg"
+      "peso": "0.5kg"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-015.webp"
   },
   {
     "id": "g-016",
     "codigoBarras": "TRI-003",
-    "nombre": "Estabilizador Ronin S",
+    "nombre": "Estabilizador DJI Ronin-S",
     "categoria": "tripode",
     "gama": "premium",
     "estado": "prestado",
@@ -221,7 +221,7 @@
       "pesoMax": "3.6kg",
       "autonomia": "12h"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-016.webp"
   },
   {
     "id": "g-017",
@@ -235,12 +235,12 @@
       "tipo": "Canon",
       "polar": "Cardioide"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-017.webp"
   },
   {
     "id": "g-018",
     "codigoBarras": "AUD-002",
-    "nombre": "Microfono Lavalier Sennheiser",
+    "nombre": "Microfono Lavalier Sennheiser ME 2-II",
     "categoria": "audio",
     "gama": "standard",
     "estado": "disponible",
@@ -249,7 +249,7 @@
       "tipo": "Lavalier",
       "polar": "Omnidireccional"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-018.webp"
   },
   {
     "id": "g-019",
@@ -263,7 +263,7 @@
       "tipo": "Grabador",
       "canales": 4
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-019.webp"
   },
   {
     "id": "g-020",
@@ -277,6 +277,6 @@
       "tipo": "Inalambrico",
       "polar": "Cardioide"
     },
-    "imagen": ""
+    "imagen": "/assets/equipos/g-020.webp"
   }
 ]

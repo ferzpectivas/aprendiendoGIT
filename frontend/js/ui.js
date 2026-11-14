@@ -20,6 +20,32 @@ const UI = {
   },
 
   /**
+   * Devuelve la URL de la foto de un equipo, o el placeholder si no tiene.
+   *
+   * @param {Object} equipo - Objeto equipo del catalogo.
+   * @returns {string}
+   */
+  fotoEquipo(equipo) {
+    return equipo && equipo.imagen
+      ? equipo.imagen
+      : '/assets/equipos/placeholder.svg';
+  },
+
+  /**
+   * Genera el HTML de la foto de un equipo con atributos seguros.
+   *
+   * @param {Object} equipo - Objeto equipo del catalogo.
+   * @param {string} clase - Clase CSS para la etiqueta img.
+   * @returns {string}
+   */
+  htmlFotoEquipo(equipo, clase) {
+    const src = this.escapar(this.fotoEquipo(equipo));
+    const alt = this.escapar(equipo ? equipo.nombre : 'Equipo');
+    return '<img class="' + this.escapar(clase) + '" src="' + src + '" alt="' + alt + '" ' +
+      'loading="lazy" onerror="this.onerror=null;this.src=\'/assets/equipos/placeholder.svg\'">';
+  },
+
+  /**
    * Abre un modal generico.
    *
    * @param {Object} opciones
