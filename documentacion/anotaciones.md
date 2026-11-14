@@ -7,6 +7,7 @@
 - [Relevamiento funcional](./relevamiento/relevamiento-funcional.md)
 - [Caso de estudio 8](./relevamiento/caso-de-estudio-8.pdf)
 - [Actividad individual de relevamiento](./relevamiento/actividad-individual-relevamiento.docx)
+- [API REST](./api-rest.md)
 
 ## Entregas anteriores
 

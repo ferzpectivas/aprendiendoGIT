@@ -31,7 +31,6 @@ Sistema de gestión de préstamos de equipamiento audiovisual para la Escuela de
 - Sesiones: `express-session` con cookie `connect.sid` (8 horas, `httpOnly`)
 - Persistencia: archivos JSON en `backend/src/data/`
 - Frontend: HTML, CSS y JavaScript vanilla (navegación multipágina)
-- Tests: Jest + Supertest
 - Despliegue: Render (servicio único)
 
 ## Estructura del repositorio
@@ -161,6 +160,8 @@ El frontend consume una API REST mediante `frontend/js/api.js`. Los datos de dom
 La persistencia se realiza en `backend/src/data/*.json` mediante `backend/src/utils/fileStore.js`, que mantiene caché en memoria y escrituras atómicas. Para tests o entornos temporales se puede definir `CINESTOCK_DATA_DIR`.
 
 ## API REST
+
+detalle: [API REST cinestock](./documentacion/api-rest.md)
 
 | Método | Ruta | Rol | Descripción |
 |---|---|---|---|
