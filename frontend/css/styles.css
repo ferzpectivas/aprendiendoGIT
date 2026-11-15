@@ -377,10 +377,6 @@ button:disabled {
         font-size: 1.1rem;
     }
 
-    .usuarios-demo {
-        font-size: 0.7rem;
-    }
-
     /* Stats grid del director */
     .stats-grid {
         grid-template-columns: repeat(2, 1fr) !important;
@@ -712,5 +708,228 @@ button:disabled {
     .remito-acciones a {
         width: 100%;
         text-align: center;
+    }
+}
+
+/* --- 16. Página de inicio (login) ==================================================== */
+
+/*
+ * Layout del home basado en el boceto de dos paneles:
+ * - Tarjeta transparente que ocupa toda la pantalla sobre el fondo animado.
+ * - Panel izquierdo con la marca y el nombre de la escuela.
+ * - Panel derecho con el formulario y los logins de ejemplo plegables.
+ */
+
+.login-error {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    display: none;
+    font-size: 0.9rem;
+}
+
+.login-error.visible {
+    display: block;
+}
+
+.home-main {
+    min-height: 100vh;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: clamp(1rem, 2.5vw, 2.5rem);
+}
+
+.home-card {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    width: 100%;
+    max-width: 1500px;
+    min-height: calc(100vh - clamp(2rem, 5vw, 5rem));
+    padding: clamp(1.25rem, 2.5vw, 2.5rem);
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+}
+
+.home-brand,
+.home-login {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+}
+
+.home-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: clamp(2rem, 5vw, 4rem);
+    background: transparent;
+    text-shadow: 0 2px 10px rgba(15, 23, 42, 0.22);
+}
+
+.home-brand h1 {
+    font-size: clamp(2.75rem, 5.5vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #0005a6;
+    margin-bottom: 0.9rem;
+}
+
+.home-brand p {
+    font-size: clamp(1.05rem, 1.6vw, 1.5rem);
+    line-height: 1.4;
+    color: #64748b;
+    max-width: 22ch;
+}
+
+.home-brand p.home-brand-tagline {
+    margin-top: 1rem;
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #0005a6;
+    max-width: 30ch;
+}
+
+.home-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-self: center;
+    align-self: center;
+    width: 100%;
+    max-width: 460px;
+    padding: clamp(1.5rem, 2.5vw, 2.5rem);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.home-login h2 {
+    font-size: clamp(1.4rem, 2vw, 1.8rem);
+    color: #1e293b;
+    margin-bottom: 1.25rem;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.btn-login:hover {
+    background-color: #0369a1;
+}
+
+/* Cajita plegable con los usuarios de prueba */
+.home-demo {
+    margin-top: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.home-demo summary {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #334155;
+    cursor: pointer;
+    list-style: none;
+}
+
+.home-demo summary::-webkit-details-marker {
+    display: none;
+}
+
+.home-demo summary::after {
+    content: '+';
+    float: right;
+    color: #0284c7;
+    font-weight: bold;
+}
+
+.home-demo[open] summary::after {
+    content: '\2212';
+}
+
+.home-demo ul {
+    list-style: none;
+    margin-top: 0.75rem;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: #475569;
+}
+
+.home-demo li {
+    overflow-wrap: anywhere;
+}
+
+/* Responsive del home */
+@media (max-width: 900px) {
+    .home-main {
+        padding: 1rem;
+    }
+
+    .home-card {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding: 1.25rem;
+        gap: 1.25rem;
+    }
+
+    .home-brand {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .home-brand p {
+        max-width: none;
+    }
+
+    .home-login {
+        justify-self: stretch;
+        align-self: stretch;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-main {
+        padding: 0.75rem;
+    }
+
+    .home-card {
+        padding: 0.9rem;
+        border-radius: 18px;
+        gap: 0.9rem;
+    }
+
+    .home-brand {
+        padding: 2rem 1rem;
+        border-radius: 14px;
+    }
+
+    .home-brand h1 {
+        font-size: 2.25rem;
+    }
+
+    .home-brand p {
+        font-size: 1rem;
+    }
+
+    .home-login {
+        padding: 1.25rem;
+        border-radius: 14px;
+    }
+
+    .home-demo ul {
+        font-size: 0.72rem;
     }
 }

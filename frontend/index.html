@@ -20,90 +20,58 @@
         body {
             background: transparent !important;
         }
-        body > header, body > main {
+        body > main {
             position: relative;
             z-index: 1;
-        }
-        header {
-            position: relative;
-            z-index: 10 !important;
-            background-color: #1e293b;
-        }
-        .login-error {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 0.6rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            display: none;
-            font-size: 0.9rem;
-        }
-        .login-error.visible {
-            display: block;
-        }
-        .usuarios-demo {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-        .usuarios-demo strong {
-            color: #334155;
-        }
-        .usuarios-demo ul {
-            list-style: none;
-            margin-top: 0.5rem;
-        }
-        .usuarios-demo li {
-            margin-bottom: 0.3rem;
         }
     </style>
 </head>
 <body>
     <div id="animacion-fondo"></div>
-    <header>
-        <h1>CineStock</h1>
-        <p>Escuela de Artes Audiovisuales "Lumiere"</p>
-    </header>
 
-    <main>
-        <section class="login-box">
-            <h2>Iniciar Sesion</h2>
+    <main class="home-main">
+        <div class="home-card">
+            <section class="home-brand">
+                <h1>Cinestock</h1>
+                <p>Escuela de Artes Audiovisuales "Lumiere"</p>
+                <p class="home-brand-tagline">Sistema de préstamos de equipos Audiovisuales</p>
+            </section>
 
-            <!-- Mensaje de error que se muestra si las credenciales son incorrectas -->
-            <div id="login-error" class="login-error"></div>
+            <section class="home-login">
+                <h2>Iniciar Sesión</h2>
 
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="usuario">Matricula / Usuario:</label>
-                    <input type="text" id="usuario" name="usuario" placeholder="Ingrese su matricula" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contrasena:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit">Ingresar</button>
-            </form>
+                <!-- Mensaje de error que se muestra si las credenciales son incorrectas -->
+                <div id="login-error" class="login-error"></div>
 
-            <!-- Usuarios de prueba para facilitar el testing -->
-            <div class="usuarios-demo">
-                <p><strong>Usuarios de prueba:</strong></p>
-                <ul>
-                    <li>Alumno: 2025-1001 / cine123 (2 anio)</li>
-                    <li>Alumno: 2024-1002 / cine123 (3 anio)</li>
-                    <li>Alumno: 2023-1003 / cine123 (4 anio)</li>
-                    <li>Alumno: 2025-1004 / cine123 (1 anio)</li>
-                    <li>Panolero: ADMIN-001 / panol2026</li>
-                    <li>Panolero: ADMIN-002 / panol2026</li>
-                    <li>Director: DIR-001 / director2026</li>
-                    <li>Director: DIR-002 / director2026</li>
-                </ul>
-            </div>
-        </section>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="usuario">Matrícula</label>
+                        <input type="text" id="usuario" name="usuario" placeholder="Ingrese su matrícula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn-login">Ingresar</button>
+                </form>
+
+                <!-- Usuarios de prueba para facilitar el testing -->
+                <details class="home-demo">
+                    <summary>Logins de ejemplo</summary>
+                    <ul>
+                        <li>Alumno: 2025-1001 / cine123 (2 anio)</li>
+                        <li>Alumno: 2024-1002 / cine123 (3 anio)</li>
+                        <li>Alumno: 2023-1003 / cine123 (4 anio)</li>
+                        <li>Alumno: 2025-1004 / cine123 (1 anio)</li>
+                        <li>Panolero: ADMIN-001 / panol2026</li>
+                        <li>Panolero: ADMIN-002 / panol2026</li>
+                        <li>Director: DIR-001 / director2026</li>
+                        <li>Director: DIR-002 / director2026</li>
+                    </ul>
+                </details>
+            </section>
+        </div>
     </main>
-
-
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
